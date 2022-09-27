@@ -280,8 +280,13 @@ fabric.properties
 # if you are NOT using Zero-installs, then:
 # comment the following lines
 !.yarn/cache
+# Created by https://www.toptal.com/developers/gitignore/api/storybookjs
+# Edit at https://www.toptal.com/developers/gitignore?templates=storybookjs
 
-# and uncomment the following lines
-# .pnp.*
+### StorybookJs ###
+# gitignore template for the Storybook, UI guide for front apps
+# website: https://storybook.js.org/
 
-# End of https://www.toptal.com/developers/gitignore/api/webstorm+all,visualstudiocode,react,node,yarn
+storybook-static/
+
+# End of https://www.toptal.com/developers/gitignore/api/storybookjs
