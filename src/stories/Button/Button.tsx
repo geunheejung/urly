@@ -1,5 +1,4 @@
 import React from 'react';
-import '../Root.scss';
 import './button.scss';
 
 interface ButtonProps {
@@ -19,7 +18,7 @@ interface ButtonProps {
    * Button contents
    */
   label: string;
-  disabled: boolean;
+  disabled?: boolean;
   /**
    * Optional click handler
    */

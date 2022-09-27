@@ -1,0 +1,11 @@
+@import "../../Root";
+
+.storybook-label {
+  font-weight: 500;
+  color: $primary3;
+
+  .asterisk {
+    color: $text3;
+  }
+}
+
