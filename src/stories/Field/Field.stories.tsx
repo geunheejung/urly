@@ -2,7 +2,13 @@ import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import { Field } from './Field';
-import { Password } from '../Input/Input.stories';
+import { Id, Password } from '../Input/Input.stories';
+
+
+export const MockData = {
+  id: ['aaa'],
+  email: ['bbb'],
+}
 
 export default {
   title: 'Molecule/Field',
@@ -16,7 +22,7 @@ Default.args = {
   label: '아이디',
   isRequired: true,
   button: '중복확인',
-
+  inputProps: Id.args
 };
 
 export const PasswordField = Template.bind({});

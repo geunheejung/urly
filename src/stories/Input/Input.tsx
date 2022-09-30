@@ -64,7 +64,7 @@ export const Input = ({
     const _value = rule ? value.replace(rule, '') : value;
     setValue(_value);
     setWarning(validate(_value))
-    if (onChange) onChange(value);
+    if (onChange) onChange(_value);
   }
 
   return (

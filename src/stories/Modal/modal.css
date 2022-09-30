@@ -1,0 +1,41 @@
+.storybook-modal {
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow-x: hidden;
+  transition: background-color 0.1s;
+  background: rgba(0, 0, 0, 0.4);
+}
+.storybook-modal.hide {
+  display: none;
+}
+.storybook-modal .inner {
+  z-index: 3;
+  width: 360px;
+  background: #fff;
+  font-size: 16px;
+  text-align: center;
+  letter-spacing: -0.5px;
+  border-radius: 6px;
+}
+.storybook-modal .inner .content {
+  padding: 40px 30px;
+}
+.storybook-modal .inner .confirm {
+  cursor: pointer;
+  height: 56px;
+  border-top: 1px solid rgb(247, 247, 247);
+}
+.storybook-modal .inner .confirm button {
+  border: none;
+  height: 100%;
+}
+
+/*# sourceMappingURL=modal.css.map */

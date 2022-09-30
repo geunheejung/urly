@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import './button.scss';
 
 interface ButtonProps {
@@ -39,7 +40,7 @@ export const Button = ({
   return (
     <button
       type="button"
-      className={['storybook-button', `storybook-button--${size}`, mode].join(' ')}
+      className={classNames('storybook-button', `storybook-button--${size}`, mode)}
       style={{ backgroundColor }}
       {...props}
     >
