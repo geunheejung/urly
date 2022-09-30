@@ -1,21 +1,24 @@
 import React from 'react';
 import { Label } from '../Label/Label';
 import { Button } from '../Button/Button';
-import { Input } from '../Input/Input';
+import {Input, InputType} from '../Input/Input';
 
 import './field.scss';
 
 interface FieldProps {
-  field: {
-    label: string;
-    isRequired?: boolean;
-    placeholder: string;
-    button: string;
-  }
+  label: string;
+  isRequired?: boolean;
+  placeholder: string;
+  button: string;
+  inputType?: InputType,
 }
 
 export const Field = ({
-  field: { label, isRequired = false, placeholder, button }
+  label,
+  isRequired = false,
+  placeholder,
+  button,
+  inputType,
 }: FieldProps) => {
   return (
     <div className="storybook-field">
@@ -26,10 +29,13 @@ export const Field = ({
         />
       </div>
       <div className="center">
-        <Input placeholder={placeholder} />
+        <Input
+          placeholder={placeholder}
+          inputType={inputType}
+        />
       </div>
       <div className="right">
-        <Button label={button} />
+        {button && <Button label={button} />}
       </div>
     </div>
   )

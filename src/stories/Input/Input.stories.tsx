@@ -1,6 +1,6 @@
 import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { Input } from './Input';
+import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {Input, InputType} from './Input';
 
 export default {
   title: 'Molecule/Input',
@@ -9,9 +9,15 @@ export default {
 
 const Template: ComponentStory<typeof Input> = (args) => <Input {...args} />;
 
-export const Primary = Template.bind({});
-Primary.args = {
+export const Default = Template.bind({});
+Default.args = {
   primary: true,
   defaultValue: '',
   placeholder: '글자를 입력해주세요.',
+}
+
+export const Validated = Template.bind({});
+Validated.args = {
+  ...Default.args,
+  inputType: InputType.Id,
 }
