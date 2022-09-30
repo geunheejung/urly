@@ -11,5 +11,6 @@ const Template: ComponentStory<typeof Label> = (args) => <Label {...args} />
 
 export const Primary = Template.bind({});
 Primary.args = {
-  w
+  value: "아이디",
+  isRequired: true,
 }

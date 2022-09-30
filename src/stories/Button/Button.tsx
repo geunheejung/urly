@@ -43,7 +43,7 @@ export const Button = ({
       style={{ backgroundColor }}
       {...props}
     >
-      {label}
+      <span>{label}</span>
     </button>
   );
 };

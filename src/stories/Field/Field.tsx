@@ -1,33 +1,36 @@
 import React from 'react';
-import {Label} from "@/stories/Label/Label";
-import {Input} from "@/stories/Input/Input";
-import {Button} from "@/stories/Button/Button";
-import {IField} from "@/stories/Field/Field.stories";
+import { Label } from '../Label/Label';
+import { Button } from '../Button/Button';
+import { Input } from '../Input/Input';
+
 import './field.scss';
 
 interface FieldProps {
-  fieldList: Array<IField>
+  field: {
+    label: string;
+    isRequired?: boolean;
+    placeholder: string;
+    button: string;
+  }
 }
 
 export const Field = ({
-  fieldList
+  field: { label, isRequired = false, placeholder, button }
 }: FieldProps) => {
   return (
-    <div className="storybook-field-list">
-      {fieldList.map((row, index) => {
-        const {
-          labelValue,
-          isRequired,
-          placeholder,
-          buttonLabel
-        } = row;
-        return (
-          <div key={index} className="storybook-field">
-            hello
-          </div>
-        )
-      })}
-
+    <div className="storybook-field">
+      <div className="left">
+        <Label
+          value={label}
+          isRequired={isRequired}
+        />
+      </div>
+      <div className="center">
+        <Input placeholder={placeholder} />
+      </div>
+      <div className="right">
+        <Button label={button} />
+      </div>
     </div>
   )
 }

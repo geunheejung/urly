@@ -1,0 +1,16 @@
+.storybook-field {
+  display: flex;
+  align-items: center;
+  width: 640px;
+
+  & .left {
+    width: 21.71875%;
+  }
+  & .center {
+    flex: 1;
+  }
+  & .right {
+    width: 18.75%;
+    margin: 0 0 0 8px;
+  }
+}
