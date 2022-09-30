@@ -16,8 +16,10 @@ Default.args = {
   placeholder: '글자를 입력해주세요.',
 }
 
-export const Validated = Template.bind({});
-Validated.args = {
+export const Id = Template.bind({});  
+Id.args = {
   ...Default.args,
   inputType: InputType.Id,
+  // 한글 OR 영문
+  regexp: /[ㄱ-ㅎㅏ-ㅣ가-힣|\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g,
 }

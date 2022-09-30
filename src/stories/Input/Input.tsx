@@ -14,12 +14,14 @@ interface InputProps {
   onChange?: (value: string) => void;
   placeholder: string;
   inputType?: InputType;
+  regexp?: RegExp;
 }
 
 export const Input = ({
   primary = false,
   defaultValue = '',
   inputType,
+  regexp,
   onChange,
   ...props
 }: InputProps) => {
@@ -49,7 +51,8 @@ export const Input = ({
 
   const handleValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value } } = e;
-    setValue(value);
+    const _value = regexp ? value.replace(regexp, '') : value;
+    setValue(_value);
     validate();
     if (onChange) onChange(value);
   }
