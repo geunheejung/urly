@@ -21,7 +21,7 @@ Id.args = {
   ...Default.args,
   inputType: InputType.Id,
   // 한글 OR 영문
-  regexp: RULE.ID,
+  rule: RULE.ID,
 }
 
 export const Password = Template.bind({});
@@ -29,4 +29,6 @@ Password.args = {
   ...Default.args,
   type: 'password',
   inputType: InputType.Pw,
+  placeholder: '비밀번호를 입력해주세요',
 }
+

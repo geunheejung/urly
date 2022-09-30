@@ -2,6 +2,7 @@ import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import { Field } from './Field';
+import { Password } from '../Input/Input.stories';
 
 export default {
   title: 'Molecule/Field',
@@ -14,6 +15,14 @@ export const Default = Template.bind({});
 Default.args = {
   label: '아이디',
   isRequired: true,
-  placeholder: '아이디를 입력해주세요',
   button: '중복확인',
+
 };
+
+export const PasswordField = Template.bind({});
+PasswordField.args = {
+  ...Default.args,
+  label: '비밀번호',
+  button: '',
+  inputProps: Password.args,
+}

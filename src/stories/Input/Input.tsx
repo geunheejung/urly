@@ -13,14 +13,14 @@ export const enum InputType {
   Email = "EMAIL",
 }
 
-interface InputProps {
-  type: string;
+export interface InputProps {
+  placeholder?: string;
+  type?: string;
   primary?: boolean;
   defaultValue?: string;
   onChange?: (value: string) => void;
-  placeholder: string;
   inputType?: InputType;
-  regexp?: RegExp;
+  rule?: RegExp;
 }
 
 export const Input = ({
@@ -28,7 +28,7 @@ export const Input = ({
   primary = false,
   defaultValue = '',
   inputType,
-  regexp,
+  rule,
   onChange,
   ...props
 }: InputProps) => {
@@ -61,7 +61,7 @@ export const Input = ({
 
   const handleValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value } } = e;
-    const _value = regexp ? value.replace(regexp, '') : value;
+    const _value = rule ? value.replace(rule, '') : value;
     setValue(_value);
     setWarning(validate(_value))
     if (onChange) onChange(value);
