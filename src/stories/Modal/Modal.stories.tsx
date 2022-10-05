@@ -12,6 +12,5 @@ const Template: ComponentStory<typeof Modal> = (args) => <Modal {...args} />
 export const Primary = Template.bind({});
 Primary.args = {
   primary: true,
-  value: "아이디를 입력해주세요.",
   isOpen: true
 }

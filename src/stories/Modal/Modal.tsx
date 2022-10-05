@@ -6,29 +6,26 @@ import './modal.scss';
 interface ModalProps {
   primary?: boolean;
   isOpen: boolean;
-  value: string;
   onConfirm: () => void;
+  children: React.ReactNode,
 }
 
 export const Modal = ({
   primary = true,
   isOpen,
-  value,
   onConfirm,
+  children,
   ...props
 }: ModalProps) => {
-  const [ _isOpen, setIsOpen ] = useState(isOpen);
-
   const toggleModal = () => {
-    setIsOpen(!_isOpen);
     onConfirm();
   }
 
   return (
-    <div className={classNames(`storybook-modal storybook-modal--primary`, { hide: _isOpen })}>
+    <div className={classNames(`storybook-modal storybook-modal--primary`, { hide: isOpen })}>
       <div className="inner">
         <div className="content">
-        {value}
+        {children}
         </div>
         <div className="confirm">
           <Button

@@ -20,7 +20,7 @@ html, button, input select, textarea {
 
 .storybook-button--primary {
   color: #fff;
-  background-color: rgb(95, 0, 128);
+  background-color: #fff;
 }
 
 .storybook-button--secondary {
