@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import { Label } from '../Label/Label';
-import { Button } from '../Button/Button';
+import { Label, LabelProps } from '../Label/Label';
+import { Button, ButtonProps } from '../Button/Button';
 import {Input, InputProps} from '../Input/Input';
 import { Modal } from '../Modal/Modal';
 import './field.scss';
@@ -12,6 +12,14 @@ interface FieldProps {
   modalContent?: (value: string) => React.ReactNode | string;
   inputProps: InputProps;
 }
+
+const Left = (props: LabelProps) => (
+  <div className="left">
+    <Label {...props} />
+  </div>
+)
+const Center = ({ children }: { children: React.ReactNode }) => <div className="center">{children}</div>
+const Right = ({ children }: { children: React.ReactNode }) => <div className="right">{children}</div>
 
 export const Field = ({
   label,
@@ -37,26 +45,19 @@ export const Field = ({
 
   return (
     <div className="storybook-field">
-      <div className="left">
-        <Label
-          value={label}
-          isRequired={isRequired}
-        />
-      </div>
-      <div className="center">
+      <Left
+        label={label}
+        isRequired={isRequired}
+      />
+      <Center>
         <Input
           {...inputProps}
           onChange={handleChange}
         />
-      </div>
-      <div className="right">
-        {button && (
-          <Button
-            label={button}
-            onClick={handleClick}
-          />
-        )}
-      </div>
+      </Center>
+      <Right>
+        {button && <Button label={button} onClick={handleClick}/>}
+      </Right>
       <Modal
         isOpen={isOpen}
         onConfirm={toggleModal}
@@ -67,3 +68,6 @@ export const Field = ({
   )
 }
 
+Field.Left = Left;
+Field.Center = Center;
+Field.Right = Right;

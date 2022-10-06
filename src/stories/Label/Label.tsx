@@ -1,22 +1,22 @@
 import React from 'react';
 import './label.scss';
 
-interface LabelProps {
+export interface LabelProps {
   primary?: boolean;
-  value: string;
+  label: string;
   isRequired?: boolean;
 }
 
 export const Label = ({
   primary = true,
-  value,
+  label,
   isRequired = false,
   ...props
 }: LabelProps) => {
 
   return (
     <label className={`storybook-label storybook-label--primary`}>
-      {value}
+      {label}
       {isRequired ? <span className='asterisk'>*</span> : ''}
     </label>
   )

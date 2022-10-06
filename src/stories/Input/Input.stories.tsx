@@ -40,3 +40,9 @@ Email.args = {
   placeholder: '예: marketkurly@kurly.com'
 };
 
+export const Address = Template.bind({});
+Address.args = {
+  ...Default.args,
+  description: '배송지에 따라 상품 정보가 달라질 수 있습니다.',
+}
+

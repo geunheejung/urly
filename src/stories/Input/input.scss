@@ -16,10 +16,18 @@
     outline: none;
     box-sizing: border-box;
   }
+
+  & .warning {
+    margin: 10px 0 0 0;
+    font-size: 13px;
+    color: $text4;
+  }
+
+  & .description {
+    margin: 10px 0 0 0;
+    font-size: 12px;
+    line-height: 18px;
+    color: $text5;
+  }
 }
 
-.warning {
-  position: absolute;
-  font-size: 13px;
-  color: $text4;
-}

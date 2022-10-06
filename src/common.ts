@@ -4,3 +4,8 @@ export const RULE = {
   PW: /^(?!((?:[A-Za-z]+)|(?:[~!@#$%^&*()_+=]+)|(?:[0-9]+))$)[A-Za-z\d~!@#$%^&*()_+=]/g,
   EMAIL: /^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/,
 } as const;
+
+export const MockData = {
+  idList: ['aaa'],
+  emailList: ['bbb'],
+} as const;

@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import './button.scss';
 
-interface ButtonProps {
+export interface ButtonProps {
   /**
    * Is this the principal call to action on the page?
    */

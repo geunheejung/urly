@@ -1,9 +1,9 @@
 .storybook-field {
   display: flex;
-  align-items: center;
   width: 640px;
 }
 .storybook-field .left {
+  padding: 12px 0 0 0;
   width: 21.71875%;
 }
 .storybook-field .center {

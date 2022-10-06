@@ -16,6 +16,7 @@ export interface InputProps {
   defaultValue?: string;
   inputType?: InputType;
   ignore?: RegExp;
+  description?: string;
   onChange?: (value: string) => void;
 }
 
@@ -25,6 +26,7 @@ export const Input = ({
   defaultValue = '',
   inputType,
   ignore,
+  description,
   onChange,
   ...props
 }: InputProps) => {
@@ -74,9 +76,11 @@ export const Input = ({
         {...props}
       />
       {warning && (
-        <p className="warning">{warning}</p>
+        <div className="warning">{warning}</div>
       )}
-
+      {description && (
+        <div className="description">{description}</div>
+      )}
     </div>
   )
 }
