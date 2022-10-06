@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { Address as AddressArgs } from 'react-daum-postcode';
+import React, {useCallback, useState} from 'react';
+import { Address as AddressArgs, useDaumPostcodePopup } from 'react-daum-postcode';
 import { Field } from '../Field';
 import Input from '../../Input';
-import Postcode from '../../Modal/Postcode';
 import Button from '../../Button';
 
 interface AddressProps {
@@ -15,7 +14,29 @@ interface AddressProps {
 * 4. 검색 결과 Input에 표시.
 * */
 export const Address = (props: AddressProps) => {
-  const [ address, setAddress ] = useState<AddressArgs>();
+  const [ isOpen, setIsOpen ] = useState(false);
+  const [ firstAddress, setFirstAddress ] = useState('');
+  const [ secondAddress, setSecondAddress ] = useState('');
+
+  const open = useDaumPostcodePopup();
+
+  const handleClick = useCallback(() => {
+    setIsOpen(prev => !prev);
+    open({ onComplete: handleComplete, width: 500 });
+  }, [ isOpen, firstAddress, secondAddress ]);
+
+  const handleComplete = useCallback((address: AddressArgs) => {
+    const { buildingName, address: address1 } = address
+    const firstAddress = `${address1} (${buildingName})`;
+    setFirstAddress(firstAddress);
+  }, [ firstAddress, secondAddress, isOpen ]);
+
+  const button = (
+    <Button
+      label={'주소 검색'}
+      onClick={handleClick}
+    />
+  );
 
   return (
     <div className="storybook-field">
@@ -24,16 +45,23 @@ export const Address = (props: AddressProps) => {
         isRequired={true}
       />
       {/* 주소 검색 결과가 있어야 표시. */}
-      {address && <Field.Center>
-        <Input />
-        <Input />
+      <Field.Center>
+        {
+          isOpen ? (
+            <>
+              <Input
+                defaultValue={firstAddress}
+                readOnly={true}
+              />
+              <Input />
+              <p className="description">배송지에 따라 상품 정보가 달라질 수 있습니다.</p>
+            </>
+          ) : button
+
+
+        }
       </Field.Center>
-      }
-      <Field.Right>
-        <Button
-          label={'주소 검색'}
-        />
-      </Field.Right>
+      <Field.Right>{isOpen && button}</Field.Right>
     </div>
   )
 }

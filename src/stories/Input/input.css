@@ -23,11 +23,5 @@ html, button, input select, textarea {
   font-size: 13px;
   color: rgb(240, 63, 64);
 }
-.storybook-input .description {
-  margin: 10px 0 0 0;
-  font-size: 12px;
-  line-height: 18px;
-  color: rgb(102, 102, 102);
-}
 
 /*# sourceMappingURL=input.css.map */

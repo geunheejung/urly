@@ -14,9 +14,9 @@ export interface InputProps {
   type?: string;
   primary?: boolean;
   defaultValue?: string;
+  readOnly?: boolean;
   inputType?: InputType;
   ignore?: RegExp;
-  description?: string;
   onChange?: (value: string) => void;
 }
 
@@ -24,13 +24,13 @@ export const Input = ({
   type = 'text',
   primary = false,
   defaultValue = '',
+  readOnly = false,
   inputType,
   ignore,
-  description,
   onChange,
   ...props
 }: InputProps) => {
-  const [ value, setValue ] = useState(defaultValue);
+  const [ value, setValue ] = useState('');
   const [ warning, setWarning ] = useState('');
   const mode = primary ? 'storybook-input--primary' : 'storybook-input--secondary';
 
@@ -71,15 +71,13 @@ export const Input = ({
     <div className={['storybook-input', mode].join(' ')}>
       <input
         type={type}
-        value={value}
+        value={value || defaultValue}
+        readOnly={readOnly}
         onChange={handleValue}
         {...props}
       />
       {warning && (
         <div className="warning">{warning}</div>
-      )}
-      {description && (
-        <div className="description">{description}</div>
       )}
     </div>
   )
