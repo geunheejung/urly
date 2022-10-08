@@ -18,8 +18,7 @@ export const Address = (props: AddressProps) => {
   const [ subAddress, setSubAddress ] = useState('');
 
   const searchPopupOpen = () => {
-    setIsOpen(prev => !prev);
-    open({ onComplete: handleComplete, width: 500 }); 
+    open({ onComplete: handleComplete, width: 500 });
   }
 
   const handleClick = useCallback(() => {
@@ -53,7 +52,7 @@ export const Address = (props: AddressProps) => {
             </div>
           ) : (
             <Button label="주소 검색" onClick={handleClick} />
-          )m
+          )
         }
       </Field.Center>
       <Field.Right>{isComplete && <Button label="재검색" onClick={handleClick} />}</Field.Right>
