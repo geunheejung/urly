@@ -6,7 +6,6 @@ import Button from '../../Button';
 
 interface AddressProps {
 }
-
 /*
 * 1. 주소 검색 버튼 클릭
 * 2. 카카오 주소 검색 api 모달에서 주소 검색 후 반환
@@ -14,29 +13,27 @@ interface AddressProps {
 * 4. 검색 결과 Input에 표시.
 * */
 export const Address = (props: AddressProps) => {
-  const [ isOpen, setIsOpen ] = useState(false);
-  const [ firstAddress, setFirstAddress ] = useState('');
-  const [ secondAddress, setSecondAddress ] = useState('');
-
   const open = useDaumPostcodePopup();
+  const [ mainAddress, setMainAddress ] = useState('');
+  const [ subAddress, setSubAddress ] = useState('');
+
+  const searchPopupOpen = () => {
+    setIsOpen(prev => !prev);
+    open({ onComplete: handleComplete, width: 500 }); 
+  }
 
   const handleClick = useCallback(() => {
-    setIsOpen(prev => !prev);
-    open({ onComplete: handleComplete, width: 500 });
-  }, [ isOpen, firstAddress, secondAddress ]);
+    searchPopupOpen();
+  }, [ mainAddress, subAddress, searchPopupOpen ]);
 
-  const handleComplete = useCallback((address: AddressArgs) => {
-    const { buildingName, address: address1 } = address
-    const firstAddress = `${address1} (${buildingName})`;
-    setFirstAddress(firstAddress);
-  }, [ firstAddress, secondAddress, isOpen ]);
+  const handleComplete = useCallback((searchedAddress: AddressArgs) => {
+    const { buildingName, address } = searchedAddress
+    const mainAddress = `${address} (${buildingName})`;
+    setMainAddress(mainAddress);
+  }, [ mainAddress, subAddress ]);
 
-  const button = (
-    <Button
-      label={'주소 검색'}
-      onClick={handleClick}
-    />
-  );
+  // 모든 데이터가 충족될 시 입력된 데이터를 표기한다.
+  const isComplete = !!mainAddress;
 
   return (
     <div className="storybook-field">
@@ -47,21 +44,19 @@ export const Address = (props: AddressProps) => {
       {/* 주소 검색 결과가 있어야 표시. */}
       <Field.Center>
         {
-          isOpen ? (
-            <>
-              <Input
-                defaultValue={firstAddress}
-                readOnly={true}
-              />
+          isComplete ? (
+            // 주소 표기
+            <div className='address-wrapper'>
+              <Input defaultValue={mainAddress} readOnly={true} />
               <Input />
               <p className="description">배송지에 따라 상품 정보가 달라질 수 있습니다.</p>
-            </>
-          ) : button
-
-
+            </div>
+          ) : (
+            <Button label="주소 검색" onClick={handleClick} />
+          )m
         }
       </Field.Center>
-      <Field.Right>{isOpen && button}</Field.Right>
+      <Field.Right>{isComplete && <Button label="재검색" onClick={handleClick} />}</Field.Right>
     </div>
   )
 }
