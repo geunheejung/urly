@@ -22,7 +22,7 @@ export const Modal = ({
   }
 
   return (
-    <div className={classNames(`storybook-modal storybook-modal--primary`, { hide: isOpen })}>
+    <div className={classNames(`storybook-modal storybook-modal--primary`, { hide: !isOpen })}>
       <div className="inner">
         <div className="content">
         {children}
