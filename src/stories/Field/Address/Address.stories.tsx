@@ -3,7 +3,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { Address } from './Address';
 
 export default {
-  title: 'Molecule/Field/Address',
+  title: 'Molecule/Field/ShippingAddress',
   component: Address,
 } as ComponentMeta<typeof Address>
 

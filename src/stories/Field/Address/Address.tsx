@@ -18,7 +18,13 @@ export const Address = (props: AddressProps) => {
   const [ subAddress, setSubAddress ] = useState('');
 
   const searchPopupOpen = () => {
-    open({ onComplete: handleComplete, width: 500 });
+    open({
+      onComplete: handleComplete,
+      width: 500,
+      popupTitle: '마켓컬리 :: 내일의 장보기, 마켓컬리',
+      popupKey: '주소검색1',
+      autoClose: false,
+    });
   }
 
   const handleClick = useCallback(() => {
@@ -32,7 +38,7 @@ export const Address = (props: AddressProps) => {
   }, [ mainAddress, subAddress ]);
 
   // 모든 데이터가 충족될 시 입력된 데이터를 표기한다.
-  const isComplete = !!mainAddress;
+  const isComplete = !!mainAddress && subAddress;
 
   return (
     <div className="storybook-field">

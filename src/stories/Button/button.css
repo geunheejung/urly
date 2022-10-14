@@ -8,6 +8,7 @@ html, button, input select, textarea {
   border: 1px solid rgb(95, 0, 128);
   border-radius: 3px;
   cursor: pointer;
+  color: rgb(95, 0, 128);
 }
 .storybook-button:disabled {
   background-color: rgb(221, 221, 221);
@@ -15,12 +16,11 @@ html, button, input select, textarea {
 }
 .storybook-button > span {
   font-weight: 500;
-  color: rgb(95, 0, 128);
 }
 
 .storybook-button--primary {
   color: #fff;
-  background-color: #fff;
+  background-color: rgb(95, 0, 128);
 }
 
 .storybook-button--secondary {

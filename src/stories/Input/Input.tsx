@@ -15,6 +15,7 @@ export interface InputProps {
   primary?: boolean;
   defaultValue?: string;
   readOnly?: boolean;
+  disabled?: boolean;
   inputType?: InputType;
   ignore?: RegExp;
   onChange?: (value: string) => void;
@@ -24,6 +25,7 @@ export const Input = ({
   type = 'text',
   primary = false,
   defaultValue = '',
+  disabled = false,
   readOnly = false,
   inputType,
   ignore,
@@ -73,6 +75,7 @@ export const Input = ({
         type={type}
         value={value || defaultValue}
         readOnly={readOnly}
+        disabled={disabled}
         onChange={handleValue}
         {...props}
       />

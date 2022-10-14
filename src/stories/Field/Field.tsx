@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { Label, LabelProps } from '../Label/Label';
-import { Button, ButtonProps } from '../Button/Button';
+import { Button } from '../Button/Button';
 import {Input, InputProps} from '../Input/Input';
 import { Modal } from '../Modal/Modal';
 import './field.scss';
@@ -13,11 +13,8 @@ interface FieldProps {
   inputProps: InputProps;
 }
 
-const Left = (props: LabelProps) => (
-  <div className="left">
-    <Label {...props} />
-  </div>
-)
+const Wrapper = ({ children }: { children: React.ReactNode }) => <div className="storybook-field">{children}</div>
+const Left = (props: LabelProps) => <div className="left"><Label {...props} /></div>;
 const Center = ({ children }: { children: React.ReactNode }) => <div className="center">{children}</div>
 const Right = ({ children }: { children: React.ReactNode }) => <div className="right">{children}</div>
 
@@ -68,6 +65,7 @@ export const Field = ({
   )
 }
 
+Field.Wrapper = Wrapper;
 Field.Left = Left;
 Field.Center = Center;
 Field.Right = Right;

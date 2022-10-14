@@ -18,12 +18,13 @@ export interface ButtonProps {
   /**
    * Button contents
    */
-  label: string;
+  label?: string;
   disabled?: boolean;
   /**
    * Optional click handler
    */
   onClick?: () => void;
+  children?: React.ReactNode;
 }
 
 /**
@@ -34,6 +35,7 @@ export const Button = ({
   size = 'medium',
   backgroundColor,
   label,
+  children,
   ...props
 }: ButtonProps) => {
   const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
@@ -44,7 +46,8 @@ export const Button = ({
       style={{ backgroundColor }}
       {...props}
     >
-      <span>{label}</span>
+      {/* children ? children : label */}
+      {children ? children : <span>{label}</span>}
     </button>
   );
 };

@@ -16,11 +16,11 @@
     width: 18.75%;
     margin: 0 0 0 8px;
   }
+  & .description {
+    margin: 10px 0 0 0;
+    font-size: 12px;
+    line-height: 18px;
+    color: $text5;
+  }
 }
 
-.description {
-  margin: 10px 0 0 0;
-  font-size: 12px;
-  line-height: 18px;
-  color: $text5;
-}
