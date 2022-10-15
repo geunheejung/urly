@@ -1,14 +1,28 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
+import {useLocation, useNavigate} from "react-router-dom";
 import { AiOutlineSearch } from 'react-icons/ai';
 import Input from '@/stories/Input';
 import Field from "@/stories/Field";
 import Button from "@/stories/Button";
+import {ROUTE} from "@/common";
 import './result.scss';
 
 const Result = () => {
+  const navigate = useNavigate();
+  const { state: { mainAddress } } = useLocation();
+  const [ detailAddress, setDetailAddress ] = useState('');
   const shippingInfo = {
     arrivalTime: '낮', // 샛별(dawn), 낮(afternoon), 배송불가(impossible),
   }
+
+  const handleChange = useCallback((value: string) => {
+    setDetailAddress(value);
+  }, [ detailAddress ]);
+
+  const handleResearch = useCallback(() => {
+    navigate(ROUTE.SHIPPING);
+  }, []);
+
   return (
     <div className="address-result">
       <header>
@@ -21,11 +35,11 @@ const Result = () => {
           <Input
             disabled
             readOnly
-            defaultValue="경기 파주시 조리읍"
+            defaultValue={mainAddress}
           />
         </Field.Center>
         <Field.Right>
-          <Button>
+          <Button onClick={handleResearch}>
             <AiOutlineSearch />
             <span>재검색</span>
           </Button>
@@ -35,6 +49,7 @@ const Result = () => {
         <Field.Center>
           <Input
             placeholder="나머지 주소를 입력해 주세요"
+            onChange={handleChange}
           />
         </Field.Center>
       </Field.Wrapper>

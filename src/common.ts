@@ -9,3 +9,8 @@ export const MockData = {
   idList: ['aaa'],
   emailList: ['bbb'],
 } as const;
+
+export const ROUTE = {
+  SHIPPING: '/address/shipping-address',
+  SHIPPING_RESULT: '/address/shipping-address/result'
+} as const;
