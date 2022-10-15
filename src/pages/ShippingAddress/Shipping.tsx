@@ -18,7 +18,11 @@ const Shipping = () => {
   return (
     <div>
       <DaumPostcodeEmbed
+        className="daumPostCode-wrapper"
         onComplete={handleComplete}
+        style={{
+          height: '569px'
+        }}
       />
     </div>
   )

@@ -57,13 +57,11 @@ const Result = () => {
         <p>저장된 배송지는 최대 7일 간 임시 저장 후 자동 삭제됩니다.</p>
         <p>로그인 할 경우, 회원님의 배송지 목록에 추가됩니다.</p>
       </div>
-      <div>
-        <Button
-          primary
-          label="저장"
-          size="large"
-        />
-      </div>
+      <Button
+        primary
+        label="저장"
+        size="large"
+      />
     </div>
   )
 }
