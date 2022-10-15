@@ -1,7 +1,7 @@
-import Step1 from './Step1';
-import Step2 from './Step2';
+import Shipping from './Shipping';
+import Step2 from './Result';
 
 export {
-  Step1,
+  Shipping,
   Step2,
 }

@@ -1,7 +1,3 @@
-html, button, input select, textarea {
-  font-family: "Noto Sans", "malgun gothic", AppleGothic, dotum, sans-serif;
-}
-
 .storybook-field {
   display: flex;
   width: 640px;
@@ -14,7 +10,7 @@ html, button, input select, textarea {
   flex: 1;
 }
 .storybook-field .right {
-  width: 18.75%;
+  width: 120px;
   margin: 0 0 0 8px;
 }
 .storybook-field .description {

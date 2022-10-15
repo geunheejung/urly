@@ -15,6 +15,14 @@
     color: $primary3;
     outline: none;
     box-sizing: border-box;
+
+    &:focus {
+      border: 1px solid $border2;
+    }
+
+    &:disabled {
+      color: $text2;
+    }
   }
 
   & .warning {

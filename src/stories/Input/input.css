@@ -1,7 +1,3 @@
-html, button, input select, textarea {
-  font-family: "Noto Sans", "malgun gothic", AppleGothic, dotum, sans-serif;
-}
-
 .storybook-input {
   position: relative;
 }
@@ -17,6 +13,12 @@ html, button, input select, textarea {
   color: rgb(51, 51, 51);
   outline: none;
   box-sizing: border-box;
+}
+.storybook-input input:focus {
+  border: 1px solid rgb(51, 51, 51);
+}
+.storybook-input input:disabled {
+  color: rgb(153, 153, 153);
 }
 .storybook-input .warning {
   margin: 10px 0 0 0;

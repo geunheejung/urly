@@ -1,0 +1,32 @@
+.address-result {
+  padding: 0 30px;
+}
+.address-result header {
+  display: block;
+  padding: 40px 0 34px 0;
+  text-align: center;
+}
+.address-result header h1 {
+  font-size: 24px;
+  font-weight: 500;
+}
+.address-result header h1 strong {
+  color: rgb(37, 124, 216);
+}
+.address-result header h2 {
+  padding-top: 8px;
+  font-size: 16px;
+  font-weight: 400;
+  color: rgb(102, 102, 102);
+}
+.address-result .input-field {
+  width: 100%;
+  margin: 0 0 10px 0;
+}
+.address-result .description {
+  margin: 0 0 20px 0;
+  font-size: 12px;
+  color: rgb(153, 153, 153);
+}
+
+/*# sourceMappingURL=result.css.map */

@@ -1,1 +1,1 @@
-{"version":3,"sourceRoot":"","sources":["../../Root.scss","label.scss"],"names":[],"mappings":"AAWA;EACE;;;ACVF;EACE;EACA,ODFS;;ACIT;EACE","file":"label.css"}
+{"version":3,"sourceRoot":"","sources":["label.scss","../../Root.scss"],"names":[],"mappings":"AAEA;EACE;EACA,OCFS;;ADIT;EACE","file":"label.css"}

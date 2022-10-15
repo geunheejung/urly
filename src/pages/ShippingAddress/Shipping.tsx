@@ -2,7 +2,7 @@ import React, {useCallback, useState} from 'react';
 import DaumPostcodeEmbed, { Address as AddressArgs } from 'react-daum-postcode';
 import {useNavigate} from "react-router-dom";
 
-const Step1 = () => {
+const Shipping = () => {
   const [ mainAddress, setMainAddress ] = useState('');
   const navigate = useNavigate();
 
@@ -23,4 +23,4 @@ const Step1 = () => {
   )
 }
 
-export default Step1;
+export default Shipping;

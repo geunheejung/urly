@@ -3,19 +3,20 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import Input from '@/stories/Input';
 import Field from "@/stories/Field";
 import Button from "@/stories/Button";
+import './result.scss';
 
-const Step2 = () => {
+const Result = () => {
   const shippingInfo = {
     arrivalTime: '낮', // 샛별(dawn), 낮(afternoon), 배송불가(impossible),
   }
   return (
     <div className="address-result">
       <header>
-        <h1>{shippingInfo.arrivalTime}</h1>
+        <h1><strong>{`${shippingInfo.arrivalTime}배송`}</strong>지역입니다.</h1>
         <h2>오늘 주문하면 다음 날 바로 도착해요. (일요일 휴무)</h2>
       </header>
 
-      <Field.Wrapper>
+      <Field.Wrapper className="input-field">
         <Field.Center>
           <Input
             disabled
@@ -30,9 +31,11 @@ const Step2 = () => {
           </Button>
         </Field.Right>
       </Field.Wrapper>
-      <Field.Wrapper>
+      <Field.Wrapper className="input-field">
         <Field.Center>
-          <Input />
+          <Input
+            placeholder="나머지 주소를 입력해 주세요"
+          />
         </Field.Center>
       </Field.Wrapper>
       <div className="description">
@@ -40,11 +43,15 @@ const Step2 = () => {
         <p>로그인 할 경우, 회원님의 배송지 목록에 추가됩니다.</p>
       </div>
       <div>
-        <Button primary label="저장" />
+        <Button
+          primary
+          label="저장"
+          size="large"
+        />
       </div>
     </div>
   )
 }
 
-export default Step2;
+export default Result;
 

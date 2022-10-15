@@ -13,10 +13,15 @@ interface FieldProps {
   inputProps: InputProps;
 }
 
-const Wrapper = ({ children }: { children: React.ReactNode }) => <div className="storybook-field">{children}</div>
+interface CompoundProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const Wrapper = ({ className = '', children }: CompoundProps) => <div className={`storybook-field ${className}`}>{children}</div>
 const Left = (props: LabelProps) => <div className="left"><Label {...props} /></div>;
-const Center = ({ children }: { children: React.ReactNode }) => <div className="center">{children}</div>
-const Right = ({ children }: { children: React.ReactNode }) => <div className="right">{children}</div>
+const Center = ({ className = '', children }: CompoundProps) => <div className={`center ${className}`}>{children}</div>
+const Right = ({ className = '', children }: CompoundProps) => <div className={`right ${className}`}>{children}</div>
 
 export const Field = ({
   label,
