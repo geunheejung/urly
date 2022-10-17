@@ -1,7 +1,5 @@
-.storybook-modal {
-  z-index: 1;
+.storybook-form-modal_overlay {
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
   position: fixed;
@@ -13,12 +11,7 @@
   transition: background-color .1s;
   background: rgba(0,0,0,.4);
 
-  &.hide {
-    display: none;
-  }
-
   & .inner {
-    z-index: 3;
     width: 360px;
     background: #fff;
     font-size: 16px;

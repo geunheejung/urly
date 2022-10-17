@@ -1,7 +1,5 @@
-.storybook-modal {
-  z-index: 1;
+.storybook-form-modal_overlay {
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
   position: fixed;
@@ -13,11 +11,7 @@
   transition: background-color 0.1s;
   background: rgba(0, 0, 0, 0.4);
 }
-.storybook-modal.hide {
-  display: none;
-}
-.storybook-modal .inner {
-  z-index: 3;
+.storybook-form-modal_overlay .inner {
   width: 360px;
   background: #fff;
   font-size: 16px;
@@ -25,15 +19,15 @@
   letter-spacing: -0.5px;
   border-radius: 6px;
 }
-.storybook-modal .inner .content {
+.storybook-form-modal_overlay .inner .content {
   padding: 40px 30px;
 }
-.storybook-modal .inner .confirm {
+.storybook-form-modal_overlay .inner .confirm {
   cursor: pointer;
   height: 56px;
   border-top: 1px solid rgb(247, 247, 247);
 }
-.storybook-modal .inner .confirm button {
+.storybook-form-modal_overlay .inner .confirm button {
   border: none;
   height: 100%;
 }

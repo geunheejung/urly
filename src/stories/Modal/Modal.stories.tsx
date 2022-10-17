@@ -12,5 +12,5 @@ const Template: ComponentStory<typeof Modal> = (args) => <Modal {...args} />
 export const Primary = Template.bind({});
 Primary.args = {
   primary: true,
-  isOpen: true
+  isOpen: false,  
 }

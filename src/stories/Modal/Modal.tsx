@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import classNames from 'classnames';
+import Default from '../../components/Modal/Default';
 import {Button} from "../Button/Button";
 import './modal.scss';
 
@@ -16,25 +16,28 @@ export const Modal = ({
   onConfirm,
   children,
   ...props
-}: ModalProps) => {
-  const toggleModal = () => {
+}: ModalProps) => {  
+  const toggleModal = () => {  
     onConfirm();
   }
 
   return (
-    <div className={classNames(`storybook-modal storybook-modal--primary`, { hide: !isOpen })}>
-      <div className="inner">
-        <div className="content">
+    <Default
+      isOpen={isOpen}
+      overlayClassName="storybook-form-modal_overlay"
+      className="inner"
+      onRequestClose={onConfirm}
+    >
+      <div className="content">
         {children}
-        </div>
-        <div className="confirm">
-          <Button
-            label="확인"
-            size="large"
-            onClick={toggleModal}
-          />
-        </div>
       </div>
-    </div>
+      <div className="confirm">
+        <Button
+          label="확인"
+          size="large"
+          onClick={toggleModal}
+        />
+      </div>
+    </Default>
   )
 }
