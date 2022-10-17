@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
 import { AiOutlineSearch } from 'react-icons/ai';
 import Input from '@/stories/Input';
@@ -8,7 +8,7 @@ import {ROUTE} from "@/common";
 import './result.scss';
 
 const Result = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate();  
   const { state: { mainAddress } } = useLocation();
   const [ detailAddress, setDetailAddress ] = useState('');
   const shippingInfo = {
@@ -19,9 +19,15 @@ const Result = () => {
     setDetailAddress(value);
   }, [ detailAddress ]);
 
-  const handleResearch = useCallback(() => {
+  const handleResearch = useCallback(() => {    
     navigate(ROUTE.SHIPPING);
-  }, []);
+  }, [ navigate, ROUTE ]);
+
+  const handleSubmit = useCallback(() => {       
+    window.close();  
+    navigate(ROUTE.SIGN_UP, { state: { mainAddress, detailAddress } });    
+  }, [ detailAddress ]);
+
 
   return (
     <div className="address-result">
@@ -61,6 +67,7 @@ const Result = () => {
         primary
         label="저장"
         size="large"
+        onClick={handleSubmit}
       />
     </div>
   )
