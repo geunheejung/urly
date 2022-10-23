@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import {Shipping, Result } from "./pages/ShippingAddress";
 import Home from "@/pages/Home/Home";
-import SignUp from '@/pages/SignUp';
+import SignUp from '@/pages/Signup';
 import { ROUTE } from './common';
 
 

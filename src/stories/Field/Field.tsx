@@ -4,11 +4,13 @@ import { Button } from '../Button/Button';
 import {Input, InputProps} from '../Input/Input';
 import { Modal } from '../Modal/Modal';
 import './field.scss';
+import classNames from 'classnames';
 
 interface FieldProps {
+  className?: string;
   label: string;
   isRequired?: boolean;
-  button: string;
+  button?: string;
   modalContent?: (value: string) => React.ReactNode | string;
   inputProps: InputProps;
 }
@@ -24,6 +26,7 @@ const Center = ({ className = '', children }: CompoundProps) => <div className={
 const Right = ({ className = '', children }: CompoundProps) => <div className={`right ${className}`}>{children}</div>
 
 export const Field = ({
+  className,
   label,
   isRequired = false,
   button,
@@ -31,7 +34,7 @@ export const Field = ({
   inputProps,
 }: FieldProps) => {
   const [ value, setValue ] = useState('');
-  const [ isOpen, setIsOpen ] = useState(true);
+  const [ isOpen, setIsOpen ] = useState(false);
 
   const handleChange = (value: string) => {
     setValue(value);
@@ -46,7 +49,8 @@ export const Field = ({
   }
 
   return (
-    <div className="storybook-field">
+    <div 
+    className={classNames('storybook-field', { [`${className}`]: className })}>
       <Left
         label={label}
         isRequired={isRequired}
