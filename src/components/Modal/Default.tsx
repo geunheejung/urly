@@ -8,7 +8,7 @@ export enum ThemeKey {
   Popup,
 }
 
-interface IProps extends ReactModal.Props {
+export interface DefaultModalProps extends ReactModal.Props {
   themeKey?: ThemeKey
 }
 
@@ -20,7 +20,7 @@ const Default = ({
   overlayClassName,
   onRequestClose,
   children
-}: IProps) => {
+}: DefaultModalProps) => {
   const theme = {
     [ThemeKey.Default]: 'default',
     [ThemeKey.Popup]: 'popup'

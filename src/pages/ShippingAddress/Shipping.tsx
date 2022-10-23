@@ -17,9 +17,8 @@ const Shipping = () => {
 
   useEffect(() => {
     document.title = `마켓컬리 :: 내일의 장보기, 마켓컬리`;
-  })
+  });
   
-
   return (
     <div>
       <DaumPostcodeEmbed

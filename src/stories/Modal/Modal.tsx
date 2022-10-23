@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import classNames from 'classnames';
+import React from 'react';
 import Default from '../../components/Modal/Default';
 import {Button} from "../Button/Button";
 import './modal.scss';
 
-interface ModalProps {
+interface ModalProps extends ReactModal.Props {
   primary?: boolean;
+  className?: string;
   isOpen: boolean;
   onConfirm: () => void;
   children: React.ReactNode,
@@ -12,6 +14,7 @@ interface ModalProps {
 
 export const Modal = ({
   primary = true,
+  className, 
   isOpen,
   onConfirm,
   children,
@@ -21,11 +24,19 @@ export const Modal = ({
     onConfirm();
   }
 
+  const modalClassName = classNames(
+    'inner', 
+    { 
+      [`${className}`]: !!className,
+      secondary: !primary
+    }
+  );
+
   return (
     <Default
       isOpen={isOpen}
       overlayClassName="storybook-form-modal_overlay"
-      className="inner"
+      className={modalClassName}
       onRequestClose={onConfirm}
     >
       <div className="content">

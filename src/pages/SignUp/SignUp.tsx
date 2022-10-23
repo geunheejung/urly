@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import useLocalStorageState from 'use-local-storage-state';
 import { openInNewTab } from '@/helper';
 import { ROUTE } from '@/common';
 import Button from '@/stories/Button';
@@ -8,6 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 interface SignUpProps {}
 
 const SignUp = (props: SignUpProps) => {
+  const [ address ] = useLocalStorageState('address');
   const [ isOpen, setIsOpen ] = useState(false); 
   const navigate = useNavigate(); 
   const location = useLocation();
@@ -16,7 +18,7 @@ const SignUp = (props: SignUpProps) => {
     openInNewTab(ROUTE.SHIPPING);    
     setIsOpen(prevState => !prevState);
   }, [ isOpen ]);
-  
+    
   return (
     <div>
       회원가입      

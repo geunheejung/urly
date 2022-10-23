@@ -1,13 +1,19 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
 import { AiOutlineSearch } from 'react-icons/ai';
+import useLocalStorageState from 'use-local-storage-state';
 import Input from '@/stories/Input';
 import Field from "@/stories/Field";
 import Button from "@/stories/Button";
 import {ROUTE} from "@/common";
 import './result.scss';
+import Modal from '@/stories/Modal';
 
 const Result = () => {
+  const [ isOpen, setIsOpen ] = useState(false);
+  const [ address, setAddress ] = useLocalStorageState('address', {
+    defaultValue: { mainAddress: '', detailAddress: '' }
+  });
   const navigate = useNavigate();  
   const { state: { mainAddress } } = useLocation();
   const [ detailAddress, setDetailAddress ] = useState('');
@@ -15,19 +21,29 @@ const Result = () => {
     arrivalTime: '낮', // 샛별(dawn), 낮(afternoon), 배송불가(impossible),
   }
 
-  const handleChange = useCallback((value: string) => {
-    setDetailAddress(value);
-  }, [ detailAddress ]);
+  const toggleModal = useCallback(() => setIsOpen(prev => !prev), []);
 
-  const handleResearch = useCallback(() => {    
-    navigate(ROUTE.SHIPPING);
-  }, [ navigate, ROUTE ]);
+  const handleChange = useCallback(
+    (value: string) => setDetailAddress(value), 
+    [ setDetailAddress ]
+  );
 
-  const handleSubmit = useCallback(() => {       
+  const handleResearch = useCallback(
+    () => navigate(ROUTE.SHIPPING), 
+    [ navigate ]
+  );
+  
+
+  const submit = useCallback(() => {
     window.close();  
-    navigate(ROUTE.SIGN_UP, { state: { mainAddress, detailAddress } });    
-  }, [ detailAddress ]);
+    navigate(ROUTE.SIGN_UP);    
+    setAddress({ mainAddress, detailAddress });
+  }, [ detailAddress, navigate, mainAddress, setAddress ]);
 
+  const handleConfirm = useCallback(() => {       
+    if (!detailAddress) return toggleModal();  
+    submit();
+  }, [ detailAddress, toggleModal, submit ]);
 
   return (
     <div className="address-result">
@@ -67,8 +83,15 @@ const Result = () => {
         primary
         label="저장"
         size="large"
-        onClick={handleSubmit}
+        onClick={handleConfirm}
       />
+      <Modal
+        isOpen={isOpen}
+        onRequestClose={toggleModal}
+        onConfirm={submit}
+      >    
+        <p>나머지 주소를 입력하지 않으셨습니다. 이대로 저장하시겠습니까?</p>  
+      </Modal>
     </div>
   )
 }
