@@ -9,6 +9,7 @@ export const enum InputType {
   Email = "EMAIL",
 }
 export interface InputProps {
+  maxLength?: number;
   placeholder?: string;
   type?: string;
   primary?: boolean;
@@ -21,6 +22,7 @@ export interface InputProps {
 }
 
 export const Input = ({
+  maxLength = 17,
   type = 'text',
   primary = false,
   defaultValue = '',
@@ -28,6 +30,7 @@ export const Input = ({
   readOnly = false,
   inputType,
   ignore,
+  
   onChange,
   ...props
 }: InputProps) => {
@@ -50,6 +53,7 @@ export const Input = ({
         value={value || defaultValue}
         readOnly={readOnly}
         disabled={disabled}
+        maxLength={maxLength}
         onChange={handleValue}
         {...props}
       />
