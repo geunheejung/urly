@@ -3,10 +3,11 @@ import { signupValidate } from '../../helper';
 import './input.scss';
 
 export const enum InputType {
-  Id = "ID",
-  Pw  = "PASSWORD",
-  Name = "NAME",
-  Email = "EMAIL",
+  Id = 'ID',
+  Pw  = 'PASSWORD',
+  DoublePw = 'DOUBLE_PW',
+  Name = 'NAME',
+  Email = 'EMAIL',
 }
 export interface InputProps {
   maxLength?: number;
@@ -18,6 +19,7 @@ export interface InputProps {
   disabled?: boolean;
   inputType?: InputType;
   ignore?: RegExp;
+  warningMessage?: () => string;
   onChange?: (value: string) => void;
 }
 
@@ -30,7 +32,7 @@ export const Input = ({
   readOnly = false,
   inputType,
   ignore,
-  
+  warningMessage,  
   onChange,
   ...props
 }: InputProps) => {
@@ -43,9 +45,15 @@ export const Input = ({
     const _value = ignore ? value.replace(ignore, '') : value;
     setValue(_value);
     setWarning(signupValidate(_value, inputType))
-    if (onChange) onChange(_value);
+    if (onChange) {      
+      
+      onChange(_value);
+    }
   }
 
+  
+    
+  
   return (
     <div className={['storybook-input', mode].join(' ')}>
       <input
@@ -58,7 +66,9 @@ export const Input = ({
         {...props}
       />
       {warning && (
-        <div className="warning">{warning}</div>
+        <div className="warning">{
+          warningMessage ? warningMessage() : warning
+        }</div>
       )}
     </div>
   )

@@ -7,12 +7,13 @@ import './field.scss';
 import classNames from 'classnames';
 
 interface FieldProps {
+  inputProps: InputProps;  
   className?: string;
   label: string;
   isRequired?: boolean;
-  button?: string;
-  modalContent?: (value: string) => React.ReactNode | string;
-  inputProps: InputProps;
+  button?: string;    
+  modalContent?: (value: string) => React.ReactNode | string;    
+  handleClick?: () => void;
 }
 
 interface CompoundProps {
@@ -29,25 +30,10 @@ export const Field = ({
   className,
   label,
   isRequired = false,
-  button,
-  modalContent,
+  button,  
   inputProps,
-}: FieldProps) => {
-  const [ value, setValue ] = useState('');
-  const [ isOpen, setIsOpen ] = useState(false);
-
-  const handleChange = (value: string) => {
-    setValue(value);
-  };
-
-  const handleClick = () => {
-    toggleModal()
-  }
-
-  const toggleModal = () => {
-    setIsOpen(!isOpen);
-  }
-
+  handleClick,
+}: FieldProps) => {    
   return (
     <div 
     className={classNames('storybook-field', { [`${className}`]: className })}>
@@ -56,20 +42,11 @@ export const Field = ({
         isRequired={isRequired}
       />
       <Center>
-        <Input
-          {...inputProps}
-          onChange={handleChange}
-        />
+        <Input {...inputProps} />
       </Center>
       <Right>
         {button && <Button label={button} onClick={handleClick}/>}
-      </Right>
-      <Modal
-        isOpen={isOpen}
-        onConfirm={toggleModal}
-      >
-        {modalContent && modalContent(value)}
-      </Modal>
+      </Right>      
     </div>
   )
 }
