@@ -15,6 +15,7 @@ const Signup = () => {
   const [pw, , handlePw] = useInput('');
   const [confirmPw, , handleConfirmPw] = useInput('');
   const [name, , handleName] = useInput('');
+  const [email, , handleEmail] = useInput('');
   const [address] = useLocalStorageState('address');
   const [isOpen, setIsOpen] = useState(false);
 
@@ -94,6 +95,18 @@ const Signup = () => {
             ignore: RULE.SPECIAL,
           }}
           onChange={handleName}
+        />
+        <Field
+          label="이메일"
+          isRequired
+          button="중복확인"
+          inputProps={{
+            inputType: InputType.Email,
+            placeholder: '예: marketkurly@kurly.com',
+            maxLength: 100,
+          }}
+          onChange={handleEmail}
+          modalContent={confirmAgain(InputType.Email)}
         />
       </div>
       {/* <Button onClick={handleAddressSearch}>
