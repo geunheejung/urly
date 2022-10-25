@@ -1,14 +1,21 @@
 import React, { useCallback, useState, Dispatch, SetStateAction } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
+import _throttle from 'lodash/throttle';
 import { confirmEmail, confirmId } from '@/api';
 import { ROUTE, RULE } from '@/common';
-import { openInNewTab, signupValidate } from '@/helper';
+import { openInNewTab, signupValidate, verifyCode, IVerifyCodeResponse } from '@/helper';
 import Button from '@/stories/Button';
 import Field from '@/stories/Field';
 import { InputType } from '@/stories/Input/Input';
 import Modal from '@/stories/Modal';
 import { useInput } from '@/hooks/useInput';
 import './signUp.scss';
+
+enum API_STATUS {
+  REQUEST = 'REQUEST',
+  SUCCESS = 'SUCCESS',
+  FAILURE = 'FAILURE',
+}
 
 const Signup = () => {
   const [id, , handleId] = useInput('');
@@ -17,8 +24,9 @@ const Signup = () => {
   const [name, , handleName] = useInput('');
   const [email, , handleEmail] = useInput('');
   const [phone, , handlePhone] = useInput('');
+  const [verifyCodeResponse, setVerifyCodeResponse] = useState<IVerifyCodeResponse>();
+  const [apiStatus, setApiStatus] = useState<API_STATUS>();
   const [address] = useLocalStorageState('address');
-  const [isOpen, setIsOpen] = useState(false);
 
   const confirmAgain = (inputType: InputType) => (value: string) => {
     const message = signupValidate(value, inputType);
@@ -38,14 +46,39 @@ const Signup = () => {
     return message;
   }, [pw, confirmPw]);
 
+  const getVerifyMsg = useCallback(() => {
+    if (!verifyCodeResponse) return;
+    const { message } = verifyCodeResponse;
+
+    return message;
+  }, [phone, verifyCodeResponse]);
+
+  const clickVerifyCode = useCallback(
+    async (value: string, openModal: () => void) => {
+      try {
+        await setApiStatus(API_STATUS.REQUEST);
+        const response = await verifyCode({ phone });
+        await setVerifyCodeResponse(response);
+        await setApiStatus(API_STATUS.SUCCESS);
+      } catch (error) {
+        await setApiStatus(API_STATUS.FAILURE);
+      } finally {
+        await openModal();
+      }
+    },
+    [phone, verifyCodeResponse, apiStatus],
+  );
+
+  /* 
   const handleAddressSearch = useCallback(() => {
     openInNewTab(ROUTE.SHIPPING);
     setIsOpen((prevState) => !prevState);
   }, [isOpen]);
+  */
 
-  const toggleModal = useCallback(() => {
-    setIsOpen((prev) => !prev);
-  }, [isOpen]);
+  const isLoading = apiStatus === API_STATUS.REQUEST;
+
+  console.log(apiStatus, isLoading);
 
   return (
     <div className="signup">
@@ -121,8 +154,11 @@ const Signup = () => {
           button="인증번호 받기"
           buttonProps={{
             disabled: !phone,
+            isLoading: isLoading,
           }}
           onChange={handlePhone}
+          onClick={_throttle(clickVerifyCode, 300)}
+          modalContent={getVerifyMsg}
         />
       </div>
       {/* <Button onClick={handleAddressSearch}>

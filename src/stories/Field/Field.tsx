@@ -15,12 +15,14 @@ interface FieldProps {
   isRequired?: boolean;
   button?: string;
   onChange?: (value: string) => void;
+  onClick?: (value: string, openModal: () => void) => void;
   modalContent?: (value: string) => ReactNode;
 }
 
 export const Field = ({
   inputProps,
   buttonProps,
+  onClick,
   label,
   className,
   isRequired = false,
@@ -29,11 +31,16 @@ export const Field = ({
   onChange,
 }: FieldProps) => {
   const [value, setValue] = useState('');
-  const [isOpen, setIsOpen] = useState(false);
+  const [_isOpen, setIsOpen] = useState(false);
+
+  const handleClick = useCallback(() => {
+    if (onClick) return onClick(value, toggleModal);
+    toggleModal();
+  }, [value, _isOpen]);
 
   const toggleModal = useCallback(() => {
     setIsOpen((prev) => !prev);
-  }, [isOpen]);
+  }, [_isOpen]);
 
   const handleChange = useCallback(
     (value: string) => {
@@ -50,9 +57,9 @@ export const Field = ({
       <Center>
         <Input onChange={handleChange} {...inputProps} />
       </Center>
-      <Right>{button && <Button label={button} onClick={toggleModal} {...buttonProps} />}</Right>
+      <Right>{button && <Button label={button} onClick={handleClick} {...buttonProps} />}</Right>
 
-      <Modal isOpen={isOpen} onConfirm={toggleModal}>
+      <Modal isOpen={_isOpen} onConfirm={toggleModal}>
         {modalContent && modalContent(value)}
       </Modal>
     </div>

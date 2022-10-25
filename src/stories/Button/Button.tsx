@@ -1,44 +1,32 @@
 import React from 'react';
 import classNames from 'classnames';
+import ClipLoader from 'react-spinners/ClipLoader';
+import _isUndefined from 'lodash/isUndefined';
 import './button.scss';
 
 export interface ButtonProps {
-  /**
-   * Is this the principal call to action on the page?
-   */
   primary?: boolean;
-  /**
-   * What background color to use
-   */
   backgroundColor?: string;
-  /**
-   * How large should the button be?
-   */
   size?: 'small' | 'medium' | 'large';
-  /**
-   * Button contents
-   */
   label?: string;
   disabled?: boolean;
-  /**
-   * Optional click handler
-   */
   onClick?: () => void;
   children?: React.ReactNode;
+  isLoading?: boolean;
 }
 
-/**
- * Primary UI component for user interaction
- */
 export const Button = ({
   primary = false,
   size = 'medium',
   backgroundColor,
   label,
   children,
+  isLoading,
   ...props
 }: ButtonProps) => {
   const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
+  const _isLoading = !_isUndefined(isLoading) && isLoading;
+  const content = children ? children : <span>{label}</span>;
   return (
     <button
       type="button"
@@ -46,8 +34,7 @@ export const Button = ({
       style={{ backgroundColor }}
       {...props}
     >
-      {/* children ? children : label */}
-      {children ? children : <span>{label}</span>}
+      {_isLoading ? <ClipLoader /> : content}
     </button>
   );
 };

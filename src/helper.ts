@@ -51,3 +51,36 @@ export const signupValidate = (value: string, inputType?: InputType) => {
 
   return message;
 };
+
+interface IVerificationCode {
+  phone: string;
+}
+export interface IVerifyCodeResponse {
+  status: number;
+  message: string;
+  value: string;
+}
+
+export const verifyCode = (payload: IVerificationCode): Promise<IVerifyCodeResponse> => {
+  // 전화번호를 받는다.
+  // 양식을 체크한다.
+  // 임의로 타이머 걸고, 그 후에 인증번호 리턴
+  const { phone } = payload;
+
+  return new Promise((resolve, reject) => {
+    fetch('https://jsonplaceholder.typicode.com/todos/1').then((res) => {
+      if (!RULE.PHONE.test(phone)) {
+        reject({
+          status: 400,
+          message: '잘못된 휴대폰 번호 입니다. 확인 후 다시 시도해 주세요.',
+        });
+      }
+
+      resolve({
+        status: 200,
+        message: '인증번호가 발송되었습니다.',
+        value: '123456',
+      });
+    });
+  });
+};

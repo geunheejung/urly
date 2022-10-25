@@ -6,6 +6,7 @@ export const RULE = {
   REPEAT_NUM: /\b(\d)\1+\b/g,
   EMAIL: /^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/,
   EXCEPT_NUM: /[^0-9]/g,
+  PHONE: /^[0-9]{2,3}[0-9]{3,4}[0-9]{4}/g,
 } as const;
 
 export const MockData = {
