@@ -16,6 +16,7 @@ const Signup = () => {
   const [confirmPw, , handleConfirmPw] = useInput('');
   const [name, , handleName] = useInput('');
   const [email, , handleEmail] = useInput('');
+  const [phone, , handlePhone] = useInput('');
   const [address] = useLocalStorageState('address');
   const [isOpen, setIsOpen] = useState(false);
 
@@ -56,13 +57,13 @@ const Signup = () => {
         <Field
           label="아이디"
           isRequired
-          button="중복확인"
           inputProps={{
-            placeholder: '아이디를 입력해주세요',
             inputType: InputType.Id,
+            placeholder: '아이디를 입력해주세요',
             ignore: RULE.SPECIAL,
           }}
           onChange={handleId}
+          button="중복확인"
           modalContent={confirmAgain(InputType.Id)}
         />
         <Field
@@ -70,8 +71,8 @@ const Signup = () => {
           isRequired
           inputProps={{
             type: 'password',
-            placeholder: '비밀번호를 입력해주세요',
             inputType: InputType.Pw,
+            placeholder: '비밀번호를 입력해주세요',
           }}
           onChange={handlePw}
         />
@@ -80,8 +81,8 @@ const Signup = () => {
           isRequired
           inputProps={{
             type: 'password',
-            placeholder: '비밀번호를 한번 더 입력해주세요',
             inputType: InputType.DoublePw,
+            placeholder: '비밀번호를 한번 더 입력해주세요',
             warningMessage: getConfirmPwMsg,
           }}
           onChange={handleConfirmPw}
@@ -99,14 +100,29 @@ const Signup = () => {
         <Field
           label="이메일"
           isRequired
-          button="중복확인"
           inputProps={{
             inputType: InputType.Email,
             placeholder: '예: marketkurly@kurly.com',
             maxLength: 100,
           }}
           onChange={handleEmail}
+          button="중복확인"
           modalContent={confirmAgain(InputType.Email)}
+        />
+        <Field
+          label="휴대폰"
+          isRequired
+          inputProps={{
+            inputType: InputType.Phone,
+            placeholder: '숫자만 입력해주세요',
+            maxLength: 11,
+            ignore: RULE.EXCEPT_NUM,
+          }}
+          button="인증번호 받기"
+          buttonProps={{
+            disabled: !phone,
+          }}
+          onChange={handlePhone}
         />
       </div>
       {/* <Button onClick={handleAddressSearch}>

@@ -12,26 +12,38 @@ export const openInNewTab = (url: string) => {
 
 export const signupValidate = (value: string, inputType?: InputType) => {
   let message = '';
+
+  const validatePW = () => {
+    const matched = value.match(RULE.REPEAT_NUM);
+    if (matched && matched[0].length >= 3) return (message = '동일한 숫자 3개이상 금지');
+    if (value && value.length < 10) return (message = '최소 10자 이상 입력');
+    if (!value.match(RULE.PW)) message = '영문/숫자/특수문자(공백 제외)만 허용하며, 2개 이상 조합';
+  };
+
+  const validateEmail = () => {
+    if (!value) return (message = '이메일을 입력해주세요.');
+    if (!value.match(RULE.EMAIL)) message = '이메일 형식으로 입력해주세요.';
+  };
+
   switch (inputType) {
     case InputType.Id:
       // 6자 이상 16자 이하의 영문 혹은 영문과 숫자를 조합
       if (!value.match(RULE.ID)) message = '6자 이상 16자 이하의 영문 혹은 영문과 숫자를 조합';
       break;
     case InputType.Pw:
-      const matched = value.match(RULE.REPEAT_NUM);
-      if (matched && matched[0].length >= 3) return '동일한 숫자 3개이상 금지';
-      if (value && value.length < 10) return '최소 10자 이상 입력';
-      if (!value.match(RULE.PW)) message = '영문/숫자/특수문자(공백 제외)만 허용하며, 2개 이상 조합';
+      validatePW();
       break;
     case InputType.DoublePw:
       if (!value) return '비밀번호를 한번 더 입력해 주세요.';
       break;
     case InputType.Email:
-      if (!value) return '이메일을 입력해주세요.';
-      if (!value.match(RULE.EMAIL)) message = '이메일 형식으로 입력해주세요.';
+      validateEmail();
       break;
     case InputType.Name:
       if (!value) return '이름을 입력해주세요.';
+      break;
+    case InputType.Phone:
+      if (!value) return '휴대폰 번호를 입력해주세요.';
       break;
     default:
       break;

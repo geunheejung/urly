@@ -1,4 +1,4 @@
-@import "../../Root";
+@import '../../Root';
 
 .storybook-button {
   display: flex;
@@ -12,8 +12,9 @@
   color: $primary1;
 
   &:disabled {
-    background-color: $primary2;
-    border: none;
+    background-color: $primary4;
+    color: $primary2;
+    border: 1px solid $primary2;
   }
 
   & > span {

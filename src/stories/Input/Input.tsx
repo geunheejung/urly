@@ -10,6 +10,7 @@ export const enum InputType {
   DoublePw = 'DOUBLE_PW',
   Name = 'NAME',
   Email = 'EMAIL',
+  Phone = 'PHONE',
 }
 export interface InputProps {
   maxLength?: number;

@@ -5,6 +5,7 @@ export const RULE = {
   PW: /^(?!((?:[A-Za-z]+)|(?:[~!@#$%^&*()_+=]+)|(?:[0-9]+))$)[A-Za-z\d~!@#$%^&*()_+=]/g,
   REPEAT_NUM: /\b(\d)\1+\b/g,
   EMAIL: /^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/,
+  EXCEPT_NUM: /[^0-9]/g,
 } as const;
 
 export const MockData = {

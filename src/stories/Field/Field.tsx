@@ -1,13 +1,15 @@
 import React, { ReactNode, useCallback, useState } from 'react';
 import classNames from 'classnames';
 import { Label, LabelProps } from '../Label/Label';
-import { Button } from '../Button/Button';
+import { Button, ButtonProps } from '../Button/Button';
 import { Input, InputProps } from '../Input/Input';
 import { Modal } from '../Modal/Modal';
 import './field.scss';
 
 interface FieldProps {
+  disabled?: boolean;
   inputProps: InputProps;
+  buttonProps?: ButtonProps;
   className?: string;
   label: string;
   isRequired?: boolean;
@@ -18,6 +20,7 @@ interface FieldProps {
 
 export const Field = ({
   inputProps,
+  buttonProps,
   label,
   className,
   isRequired = false,
@@ -45,9 +48,9 @@ export const Field = ({
     <div className={classNames('storybook-field', { [`${className}`]: className })}>
       <Left label={label} isRequired={isRequired} />
       <Center>
-        <Input {...inputProps} onChange={handleChange} />
+        <Input onChange={handleChange} {...inputProps} />
       </Center>
-      <Right>{button && <Button label={button} onClick={toggleModal} />}</Right>
+      <Right>{button && <Button label={button} onClick={toggleModal} {...buttonProps} />}</Right>
 
       <Modal isOpen={isOpen} onConfirm={toggleModal}>
         {modalContent && modalContent(value)}
