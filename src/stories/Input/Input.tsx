@@ -1,3 +1,4 @@
+import { debug } from 'console';
 import React, { useState } from 'react';
 import { signupValidate } from '../../helper';
 import './input.scss';
@@ -44,13 +45,13 @@ export const Input = ({
     const {
       target: { value },
     } = e;
-    const _value = ignore ? value.replace(ignore, '') : value;
+    if (ignore && ignore.test(value)) return;
 
-    setValue(_value);
-    setWarning(signupValidate(_value, inputType));
+    setValue(value);
+    setWarning(signupValidate(value, inputType));
 
     if (onChange) {
-      onChange(_value);
+      onChange(value);
     }
   };
 

@@ -1,38 +1,22 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, Dispatch, SetStateAction } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import { confirmEmail, confirmId } from '@/api';
-import { ROUTE } from '@/common';
+import { ROUTE, RULE } from '@/common';
 import { openInNewTab, signupValidate } from '@/helper';
 import Button from '@/stories/Button';
 import Field from '@/stories/Field';
 import { InputType } from '@/stories/Input/Input';
 import Modal from '@/stories/Modal';
-import './signup.scss';
+import { useInput } from '@/hooks/useInput';
+import './signUp.scss';
 
 const Signup = () => {
-  const [id, setId] = useState('');
-  const [pw, setPw] = useState('');
-  const [confirmPw, setConfirmPw] = useState('');
+  const [id, , handleId] = useInput('');
+  const [pw, , handlePw] = useInput('');
+  const [confirmPw, , handleConfirmPw] = useInput('');
+  const [name, , handleName] = useInput('');
   const [address] = useLocalStorageState('address');
   const [isOpen, setIsOpen] = useState(false);
-  const handleId = useCallback(
-    (value: string) => {
-      setId(value);
-    },
-    [id],
-  );
-  const handlePw = useCallback(
-    (value: string) => {
-      setPw(value);
-    },
-    [pw],
-  );
-  const handleDoubleCheck = useCallback(
-    (value: string) => {
-      setConfirmPw(value);
-    },
-    [[confirmPw]],
-  );
 
   const confirmAgain = (inputType: InputType) => (value: string) => {
     const message = signupValidate(value, inputType);
@@ -75,6 +59,7 @@ const Signup = () => {
           inputProps={{
             placeholder: '아이디를 입력해주세요',
             inputType: InputType.Id,
+            ignore: RULE.SPECIAL,
           }}
           onChange={handleId}
           modalContent={confirmAgain(InputType.Id)}
@@ -98,7 +83,17 @@ const Signup = () => {
             inputType: InputType.DoublePw,
             warningMessage: getConfirmPwMsg,
           }}
-          onChange={handleDoubleCheck}
+          onChange={handleConfirmPw}
+        />
+        <Field
+          label="이름"
+          isRequired
+          inputProps={{
+            inputType: InputType.Name,
+            placeholder: '이름을 입력해주세요',
+            ignore: RULE.SPECIAL,
+          }}
+          onChange={handleName}
         />
       </div>
       {/* <Button onClick={handleAddressSearch}>
