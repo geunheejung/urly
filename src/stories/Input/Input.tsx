@@ -1,5 +1,6 @@
 import { debug } from 'console';
 import React, { useState } from 'react';
+import _throttle from 'lodash/throttle';
 import { signupValidate } from '../../helper';
 import './input.scss';
 
@@ -55,6 +56,8 @@ export const Input = ({
     }
   };
 
+  const _handleChange = _throttle(handleValue, 300);
+
   const _warning = warningMessage || warning;
 
   return (
@@ -65,7 +68,7 @@ export const Input = ({
         readOnly={readOnly}
         disabled={disabled}
         maxLength={maxLength}
-        onChange={handleValue}
+        onChange={_handleChange}
         {...props}
       />
       {_warning && <div className="warning">{warningMessage ? warningMessage() : warning}</div>}
