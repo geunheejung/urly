@@ -1,9 +1,13 @@
-interface User { index: number; id: string; email: string }
+interface User {
+  index: number;
+  id: string;
+  email: string;
+}
 interface Mock {
-  users: User[]
+  users: User[];
 }
 
-export const mock:Mock = {
+export const mock: Mock = {
   users: [
     {
       index: 0,
@@ -25,8 +29,10 @@ export const mock:Mock = {
       id: 'hipython12345',
       email: 'hipython12345@gmail.com',
     },
-  ]
-}
+  ],
+};
 
-export const confirmId = (id: string) => mock.users.some((raw) => raw.id === id);
-export const confirmEmail = (email: string) => mock.users.some((raw) => raw.email === email);
+export const confirmId = (id: string) =>
+  mock.users.some((raw) => raw.id === id);
+export const confirmEmail = (email: string) =>
+  mock.users.some((raw) => raw.email === email);

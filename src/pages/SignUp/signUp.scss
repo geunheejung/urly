@@ -1,9 +1,8 @@
-@import "../../Root";
+@import '../../Root';
 
 .signup {
-
   & .title {
-    margin: 0 0 50px 0;  
+    margin: 0 0 50px 0;
     font-size: 28px;
     line-height: 35px;
     font-weight: 500;
@@ -18,10 +17,10 @@
 
     & .description {
       & span {
-        color: $text4;  
+        color: $text4;
       }
 
-      padding: 0 0 10px 0;      
+      padding: 0 0 10px 0;
       border-bottom: 2px solid $primary3;
       font-size: 12px;
       color: $text5;

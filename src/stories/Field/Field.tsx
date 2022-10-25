@@ -1,55 +1,76 @@
-import React, {useState} from 'react';
+import React, { ReactNode, useCallback, useState } from 'react';
+import classNames from 'classnames';
 import { Label, LabelProps } from '../Label/Label';
 import { Button } from '../Button/Button';
-import {Input, InputProps} from '../Input/Input';
+import { Input, InputProps } from '../Input/Input';
 import { Modal } from '../Modal/Modal';
 import './field.scss';
-import classNames from 'classnames';
 
 interface FieldProps {
-  inputProps: InputProps;  
+  inputProps: InputProps;
   className?: string;
   label: string;
   isRequired?: boolean;
-  button?: string;    
-  modalContent?: (value: string) => React.ReactNode | string;    
-  handleClick?: () => void;
+  button?: string;
+  onChange?: (value: string) => void;
+  modalContent?: (value: string) => ReactNode;
 }
+
+export const Field = ({
+  inputProps,
+  label,
+  className,
+  isRequired = false,
+  button,
+  modalContent,
+  onChange,
+}: FieldProps) => {
+  const [value, setValue] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleModal = useCallback(() => {
+    setIsOpen((prev) => !prev);
+  }, [isOpen]);
+
+  const handleChange = useCallback(
+    (value: string) => {
+      setValue(value);
+
+      if (onChange) onChange(value);
+    },
+    [value],
+  );
+
+  return (
+    <div className={classNames('storybook-field', { [`${className}`]: className })}>
+      <Left label={label} isRequired={isRequired} />
+      <Center>
+        <Input {...inputProps} onChange={handleChange} />
+      </Center>
+      <Right>{button && <Button label={button} onClick={toggleModal} />}</Right>
+
+      <Modal isOpen={isOpen} onConfirm={toggleModal}>
+        {modalContent && modalContent(value)}
+      </Modal>
+    </div>
+  );
+};
 
 interface CompoundProps {
   children: React.ReactNode;
   className?: string;
 }
 
-const Wrapper = ({ className = '', children }: CompoundProps) => <div className={`storybook-field ${className}`}>{children}</div>
-const Left = (props: LabelProps) => <div className="left"><Label {...props} /></div>;
-const Center = ({ className = '', children }: CompoundProps) => <div className={`center ${className}`}>{children}</div>
-const Right = ({ className = '', children }: CompoundProps) => <div className={`right ${className}`}>{children}</div>
-
-export const Field = ({
-  className,
-  label,
-  isRequired = false,
-  button,  
-  inputProps,
-  handleClick,
-}: FieldProps) => {    
-  return (
-    <div 
-    className={classNames('storybook-field', { [`${className}`]: className })}>
-      <Left
-        label={label}
-        isRequired={isRequired}
-      />
-      <Center>
-        <Input {...inputProps} />
-      </Center>
-      <Right>
-        {button && <Button label={button} onClick={handleClick}/>}
-      </Right>      
-    </div>
-  )
-}
+const Wrapper = ({ className = '', children }: CompoundProps) => (
+  <div className={`storybook-field ${className}`}>{children}</div>
+);
+const Left = (props: LabelProps) => (
+  <div className="left">
+    <Label {...props} />
+  </div>
+);
+const Center = ({ className = '', children }: CompoundProps) => <div className={`center ${className}`}>{children}</div>;
+const Right = ({ className = '', children }: CompoundProps) => <div className={`right ${className}`}>{children}</div>;
 
 Field.Wrapper = Wrapper;
 Field.Left = Left;

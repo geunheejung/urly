@@ -4,7 +4,7 @@ import './input.scss';
 
 export const enum InputType {
   Id = 'ID',
-  Pw  = 'PASSWORD',
+  Pw = 'PASSWORD',
   DoublePw = 'DOUBLE_PW',
   Name = 'NAME',
   Email = 'EMAIL',
@@ -32,28 +32,30 @@ export const Input = ({
   readOnly = false,
   inputType,
   ignore,
-  warningMessage,  
+  warningMessage,
   onChange,
   ...props
 }: InputProps) => {
-  const [ value, setValue ] = useState('');
-  const [ warning, setWarning ] = useState('');
+  const [value, setValue] = useState('');
+  const [warning, setWarning] = useState('');
   const mode = primary ? 'storybook-input--primary' : 'storybook-input--secondary';
 
   const handleValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { target: { value } } = e;
+    const {
+      target: { value },
+    } = e;
     const _value = ignore ? value.replace(ignore, '') : value;
+
     setValue(_value);
-    setWarning(signupValidate(_value, inputType))
-    if (onChange) {      
-      
+    setWarning(signupValidate(_value, inputType));
+
+    if (onChange) {
       onChange(_value);
     }
-  }
+  };
 
-  
-    
-  
+  const _warning = warningMessage || warning;
+
   return (
     <div className={['storybook-input', mode].join(' ')}>
       <input
@@ -65,12 +67,7 @@ export const Input = ({
         onChange={handleValue}
         {...props}
       />
-      {warning && (
-        <div className="warning">{
-          warningMessage ? warningMessage() : warning
-        }</div>
-      )}
+      {_warning && <div className="warning">{warningMessage ? warningMessage() : warning}</div>}
     </div>
-  )
-}
-
+  );
+};

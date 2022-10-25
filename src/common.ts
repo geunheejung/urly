@@ -1,3 +1,4 @@
+/* eslint-disabled */
 export const RULE = {
   ID: /^(?!(?:[0-9]+)$)([a-zA-Z]|[0-9a-zA-Z]){6,16}$/g,
   SPECIAL: /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g,
@@ -12,9 +13,8 @@ export const MockData = {
 } as const;
 
 export const ROUTE = {
-  HOME: '/',  
-  SIGN_UP: '/member/signup',  
+  HOME: '/',
+  SIGN_UP: '/member/signup',
   SHIPPING: '/address/shipping-address',
-  SHIPPING_RESULT: '/address/shipping-address/result'
+  SHIPPING_RESULT: '/address/shipping-address/result',
 } as const;
-
