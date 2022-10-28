@@ -1,4 +1,4 @@
-@import "../../Root";
+@import '../../Root';
 
 .storybook-input {
   position: relative;
@@ -30,5 +30,15 @@
     font-size: 13px;
     color: $text4;
   }
-}
 
+  & .field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    & .timer {
+      position: absolute;
+      right: 11px;
+      color: $text4;
+    }
+  }
+}

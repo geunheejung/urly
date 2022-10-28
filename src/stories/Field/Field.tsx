@@ -11,36 +11,39 @@ interface FieldProps {
   inputProps: InputProps;
   buttonProps?: ButtonProps;
   className?: string;
-  label: string;
+  label?: string;
   isRequired?: boolean;
   button?: string;
   onChange?: (value: string) => void;
   onClick?: (value: string, openModal: () => void) => void;
   modalContent?: (value: string) => ReactNode;
+  onConfirm?: (closeModal: () => void) => void;
 }
 
 export const Field = ({
   inputProps,
   buttonProps,
   onClick,
-  label,
+  label = '',
   className,
   isRequired = false,
   button,
   modalContent,
   onChange,
+  onConfirm,
 }: FieldProps) => {
   const [value, setValue] = useState('');
-  const [_isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = useCallback(() => {
-    if (onClick) return onClick(value, toggleModal);
-    toggleModal();
-  }, [value, _isOpen]);
+    if (onClick) return onClick(value, toggle);
+    toggle();
+  }, [value, isOpen]);
 
   const toggleModal = useCallback(() => {
-    setIsOpen((prev) => !prev);
-  }, [_isOpen]);
+    if (onConfirm) return onConfirm(toggle);
+    toggle();
+  }, [isOpen]);
 
   const handleChange = useCallback(
     (value: string) => {
@@ -51,6 +54,10 @@ export const Field = ({
     [value],
   );
 
+  const toggle = useCallback(() => {
+    setIsOpen((prev) => !prev);
+  }, [isOpen]);
+
   return (
     <div className={classNames('storybook-field', { [`${className}`]: className })}>
       <Left label={label} isRequired={isRequired} />
@@ -59,7 +66,7 @@ export const Field = ({
       </Center>
       <Right>{button && <Button label={button} onClick={handleClick} {...buttonProps} />}</Right>
 
-      <Modal isOpen={_isOpen} onConfirm={toggleModal}>
+      <Modal isOpen={isOpen} onConfirm={toggleModal}>
         {modalContent && modalContent(value)}
       </Modal>
     </div>

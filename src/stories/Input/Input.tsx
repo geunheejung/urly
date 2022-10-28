@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import _throttle from 'lodash/throttle';
 import { signupValidate } from '../../helper';
 import './input.scss';
+import moment from 'moment';
 
 export const enum InputType {
   Id = 'ID',
@@ -12,6 +13,10 @@ export const enum InputType {
   Email = 'EMAIL',
   Phone = 'PHONE',
 }
+
+// isTimer -> ms 를 받고, ms를 토대로 Timer를 실행한다.
+// Timer를 실행하는데, 이때 Timer가 끝날 시에대한 처리를 받는다?
+// Timer를 표현만 하고 Timer에 대한 관리는 상위에서.
 export interface InputProps {
   maxLength?: number;
   placeholder?: string;
@@ -22,6 +27,7 @@ export interface InputProps {
   disabled?: boolean;
   inputType?: InputType;
   ignore?: RegExp;
+  ms?: number;
   warningMessage?: () => string;
   onChange?: (value: string) => void;
 }
@@ -35,6 +41,7 @@ export const Input = ({
   readOnly = false,
   inputType,
   ignore,
+  ms,
   warningMessage,
   onChange,
   ...props
@@ -63,15 +70,18 @@ export const Input = ({
 
   return (
     <div className={['storybook-input', mode].join(' ')}>
-      <input
-        type={type}
-        value={value || defaultValue}
-        readOnly={readOnly}
-        disabled={disabled}
-        maxLength={maxLength}
-        onChange={_handleChange}
-        {...props}
-      />
+      <div className="field">
+        <input
+          type={type}
+          value={value || defaultValue}
+          readOnly={readOnly}
+          disabled={disabled}
+          maxLength={maxLength}
+          onChange={_handleChange}
+          {...props}
+        />
+        {ms && <span className="timer">{moment(ms).format('mm:ss')}</span>}
+      </div>
       {_warning && <div className="warning">{warningMessage ? warningMessage() : warning}</div>}
     </div>
   );

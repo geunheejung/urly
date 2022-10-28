@@ -27,14 +27,15 @@ export const Button = ({
   const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
   const _isLoading = !_isUndefined(isLoading) && isLoading;
   const content = children ? children : <span>{label}</span>;
+
   return (
     <button
       type="button"
-      className={classNames('storybook-button', `storybook-button--${size}`, mode)}
+      className={classNames('storybook-button', `storybook-button--${size}`, mode, { loading: _isLoading })}
       style={{ backgroundColor }}
       {...props}
     >
-      {_isLoading ? <ClipLoader /> : content}
+      {_isLoading ? <ClipLoader color="#fff" size={20} /> : content}
     </button>
   );
 };

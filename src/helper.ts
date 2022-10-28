@@ -58,7 +58,7 @@ interface IVerificationCode {
 export interface IVerifyCodeResponse {
   status: number;
   message: string;
-  value: string;
+  value?: string;
 }
 
 export const verifyCode = (payload: IVerificationCode): Promise<IVerifyCodeResponse> => {

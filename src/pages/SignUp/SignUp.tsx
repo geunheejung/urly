@@ -1,5 +1,6 @@
-import React, { useCallback, useState, Dispatch, SetStateAction } from 'react';
+import React, { useCallback, useState } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
+import moment from 'moment';
 import _throttle from 'lodash/throttle';
 import { confirmEmail, confirmId } from '@/api';
 import { ROUTE, RULE } from '@/common';
@@ -10,6 +11,7 @@ import { InputType } from '@/stories/Input/Input';
 import Modal from '@/stories/Modal';
 import { useInput } from '@/hooks/useInput';
 import './signUp.scss';
+import { useTimer } from '@/hooks/useTimer';
 
 enum API_STATUS {
   REQUEST = 'REQUEST',
@@ -24,8 +26,11 @@ const Signup = () => {
   const [name, , handleName] = useInput('');
   const [email, , handleEmail] = useInput('');
   const [phone, , handlePhone] = useInput('');
+  const [code, , handleCode] = useInput('');
   const [verifyCodeResponse, setVerifyCodeResponse] = useState<IVerifyCodeResponse>();
   const [apiStatus, setApiStatus] = useState<API_STATUS>();
+  const [isVerifyCodeConfirm, setIsVerifyCodeConfirm] = useState(false);
+  const [ms, setMs, on] = useTimer(180000);
   const [address] = useLocalStorageState('address');
 
   const confirmAgain = (inputType: InputType) => (value: string) => {
@@ -59,7 +64,6 @@ const Signup = () => {
         await setApiStatus(API_STATUS.REQUEST);
         const response = await verifyCode({ phone });
         await setVerifyCodeResponse(response);
-        await setApiStatus(API_STATUS.SUCCESS);
       } catch (error) {
         await setApiStatus(API_STATUS.FAILURE);
       } finally {
@@ -69,6 +73,15 @@ const Signup = () => {
     [phone, verifyCodeResponse, apiStatus],
   );
 
+  const handlePhoneConfirm = useCallback(
+    (closeModal: () => void) => {
+      setApiStatus(API_STATUS.SUCCESS);
+      closeModal();
+      on();
+    },
+    [phone, apiStatus],
+  );
+
   /* 
   const handleAddressSearch = useCallback(() => {
     openInNewTab(ROUTE.SHIPPING);
@@ -76,9 +89,7 @@ const Signup = () => {
   }, [isOpen]);
   */
 
-  const isLoading = apiStatus === API_STATUS.REQUEST;
-
-  console.log(apiStatus, isLoading);
+  const isLoading = apiStatus && apiStatus !== API_STATUS.SUCCESS;
 
   return (
     <div className="signup">
@@ -131,7 +142,7 @@ const Signup = () => {
           onChange={handleName}
         />
         <Field
-          label="이메일"
+          label="이메일˜"
           isRequired
           inputProps={{
             inputType: InputType.Email,
@@ -158,7 +169,23 @@ const Signup = () => {
           }}
           onChange={handlePhone}
           onClick={_throttle(clickVerifyCode, 300)}
+          onConfirm={handlePhoneConfirm}
           modalContent={getVerifyMsg}
+        />
+        {/* {verifyCodeResponse?.status === 200 && (
+          
+        )} */}
+        <Field
+          inputProps={{
+            maxLength: 6,
+            ms,
+            ignore: RULE.EXCEPT_NUM,
+          }}
+          button="인증번호 확인"
+          buttonProps={{
+            disabled: !code,
+          }}
+          onChange={handleCode}
         />
       </div>
       {/* <Button onClick={handleAddressSearch}>

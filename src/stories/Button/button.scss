@@ -11,6 +11,12 @@
   cursor: pointer;
   color: $primary1;
 
+  &.loading {
+    background: $primary1;
+    color: $primary1;
+    border-color: $primary1;
+  }
+
   &:disabled {
     background-color: $primary4;
     color: $primary2;
