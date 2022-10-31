@@ -18,6 +18,7 @@ interface FieldProps {
   onClick?: (value: string, openModal: () => void) => void;
   modalContent?: (value: string) => ReactNode;
   onConfirm?: (closeModal: () => void) => void;
+  getLoadingStatus?: (value: string, isOpen: boolean) => boolean;
 }
 
 export const Field = ({
@@ -31,6 +32,7 @@ export const Field = ({
   modalContent,
   onChange,
   onConfirm,
+  getLoadingStatus,
 }: FieldProps) => {
   const [value, setValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -58,13 +60,17 @@ export const Field = ({
     setIsOpen((prev) => !prev);
   }, [isOpen]);
 
+  const _buttonProps = { ...buttonProps };
+
+  if (getLoadingStatus) _buttonProps.isLoading = getLoadingStatus(value, isOpen);
+
   return (
     <div className={classNames('storybook-field', { [`${className}`]: className })}>
       <Left label={label} isRequired={isRequired} />
       <Center>
         <Input onChange={handleChange} {...inputProps} />
       </Center>
-      <Right>{button && <Button label={button} onClick={handleClick} {...buttonProps} />}</Right>
+      <Right>{button && <Button label={button} onClick={handleClick} {..._buttonProps} />}</Right>
 
       <Modal isOpen={isOpen} onConfirm={toggleModal}>
         {modalContent && modalContent(value)}

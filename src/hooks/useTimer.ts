@@ -1,16 +1,31 @@
 import { useState } from 'react';
 
-export const useTimer = (start: number): [number, React.Dispatch<React.SetStateAction<number>>, () => void] => {
+type TimerReturn = [number, React.Dispatch<React.SetStateAction<number>>, (after: () => void) => void, () => void];
+
+let timer: NodeJS.Timer;
+export const useTimer = (start: number): TimerReturn => {
   const [ms, setMs] = useState(start);
-  let timerId: NodeJS.Timer;
 
-  const on = () => {
-    timerId = setInterval(() => {
-      setMs((prev) => prev - 1000);
+  const on = (after: () => void) => {
+    const _updateMs = (prev: number) => {
+      const state = prev - 1000;
 
-      if (ms === 0) clearInterval(timerId);
+      if (state === 0) {
+        clearInterval(timer);
+        after();
+      }
+
+      return state;
+    };
+
+    timer = setInterval(() => {
+      setMs(_updateMs);
     }, 1000);
   };
 
-  return [ms, setMs, on];
+  const off = () => {
+    clearInterval(timer);
+  };
+
+  return [ms, setMs, on, off];
 };

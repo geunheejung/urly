@@ -2,9 +2,9 @@ import React, { useCallback, useState } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import moment from 'moment';
 import _throttle from 'lodash/throttle';
-import { confirmEmail, confirmId } from '@/api';
+import { ApiError, confirmEmail, confirmId, IVerifyCodeResponse, verifyCode } from '@/api';
 import { ROUTE, RULE } from '@/common';
-import { openInNewTab, signupValidate, verifyCode, IVerifyCodeResponse } from '@/helper';
+import { openInNewTab, signupValidate } from '@/helper';
 import Button from '@/stories/Button';
 import Field from '@/stories/Field';
 import { InputType } from '@/stories/Input/Input';
@@ -20,6 +20,7 @@ enum API_STATUS {
 }
 
 const Signup = () => {
+  const DEFAULT_MS = 3000;
   const [id, , handleId] = useInput('');
   const [pw, , handlePw] = useInput('');
   const [confirmPw, , handleConfirmPw] = useInput('');
@@ -28,9 +29,10 @@ const Signup = () => {
   const [phone, , handlePhone] = useInput('');
   const [code, , handleCode] = useInput('');
   const [verifyCodeResponse, setVerifyCodeResponse] = useState<IVerifyCodeResponse>();
+  const [apiError, setApiError] = useState<ApiError>();
   const [apiStatus, setApiStatus] = useState<API_STATUS>();
   const [isVerifyCodeConfirm, setIsVerifyCodeConfirm] = useState(false);
-  const [ms, setMs, on] = useTimer(180000);
+  const [ms, setMs, startTimer, clearTimer] = useTimer(DEFAULT_MS);
   const [address] = useLocalStorageState('address');
 
   const confirmAgain = (inputType: InputType) => (value: string) => {
@@ -52,44 +54,68 @@ const Signup = () => {
   }, [pw, confirmPw]);
 
   const getVerifyMsg = useCallback(() => {
-    if (!verifyCodeResponse) return;
-    const { message } = verifyCodeResponse;
+    const message = 'Loading...';
 
-    return message;
-  }, [phone, verifyCodeResponse]);
+    switch (apiStatus) {
+      case API_STATUS.REQUEST:
+        return message;
+      case API_STATUS.FAILURE:
+        return apiError?.message;
+      case API_STATUS.SUCCESS:
+        return verifyCodeResponse?.message;
+      default:
+        return message;
+    }
+
+    return;
+  }, [phone, verifyCodeResponse, apiError, apiStatus]);
 
   const clickVerifyCode = useCallback(
     async (value: string, openModal: () => void) => {
       try {
+        await setMs(DEFAULT_MS);
         await setApiStatus(API_STATUS.REQUEST);
         const response = await verifyCode({ phone });
-        await setVerifyCodeResponse(response);
+        setVerifyCodeResponse(response);
+        setApiStatus(API_STATUS.SUCCESS);
       } catch (error) {
-        await setApiStatus(API_STATUS.FAILURE);
+        failVerifyCode();
+        if (error instanceof ApiError) setApiError(error);
       } finally {
-        await openModal();
+        openModal();
       }
     },
-    [phone, verifyCodeResponse, apiStatus],
+    [phone, verifyCodeResponse, apiStatus, clearTimer],
   );
 
   const handlePhoneConfirm = useCallback(
-    (closeModal: () => void) => {
-      setApiStatus(API_STATUS.SUCCESS);
-      closeModal();
-      on();
+    (toggleModal: () => void) => {
+      if (apiStatus === API_STATUS.SUCCESS) {
+        startTimer(() => {
+          // 1. 인증번호 데이터 초기화
+          setVerifyCodeResponse(undefined);
+          clearTimer();
+        });
+      }
+      // 여기서 모달을 켜줘야 함.
+      toggleModal();
     },
-    [phone, apiStatus],
+    [phone, apiStatus, ms],
   );
 
+  const getVerifyLoading = (value: string, isOpen: boolean) => isOpen;
+
+  const failVerifyCode = useCallback(() => {
+    setApiStatus(API_STATUS.FAILURE);
+    setVerifyCodeResponse(undefined);
+    clearTimer();
+  }, [apiStatus, verifyCodeResponse, clearTimer]);
   /* 
   const handleAddressSearch = useCallback(() => {
     openInNewTab(ROUTE.SHIPPING);
     setIsOpen((prevState) => !prevState);
   }, [isOpen]);
   */
-
-  const isLoading = apiStatus && apiStatus !== API_STATUS.SUCCESS;
 
   return (
     <div className="signup">
@@ -163,30 +189,27 @@ const Signup = () => {
             ignore: RULE.EXCEPT_NUM,
           }}
           button="인증번호 받기"
-          buttonProps={{
-            disabled: !phone,
-            isLoading: isLoading,
-          }}
+          buttonProps={{ disabled: !phone }}
           onChange={handlePhone}
           onClick={_throttle(clickVerifyCode, 300)}
           onConfirm={handlePhoneConfirm}
           modalContent={getVerifyMsg}
+          getLoadingStatus={getVerifyLoading}
         />
-        {/* {verifyCodeResponse?.status === 200 && (
-          
-        )} */}
-        <Field
-          inputProps={{
-            maxLength: 6,
-            ms,
-            ignore: RULE.EXCEPT_NUM,
-          }}
-          button="인증번호 확인"
-          buttonProps={{
-            disabled: !code,
-          }}
-          onChange={handleCode}
-        />
+        {verifyCodeResponse?.status === 200 && (
+          <Field
+            inputProps={{
+              maxLength: 6,
+              ms,
+              ignore: RULE.EXCEPT_NUM,
+            }}
+            button="인증번호 확인"
+            buttonProps={{
+              disabled: !code,
+            }}
+            onChange={handleCode}
+          />
+        )}
       </div>
       {/* <Button onClick={handleAddressSearch}>
         주소 검색
