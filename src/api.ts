@@ -63,7 +63,7 @@ export const verifyCode = (payload: IVerificationCode): Promise<IVerifyCodeRespo
   return new Promise((resolve, reject) => {
     try {
       fetch('https://jsonplaceholder.typicode.com/todos/1').then((res) => {
-        const isValidate = RULE.PHONE.test(phone);
+        const isValidate = Array.isArray(phone.match(RULE.PHONE));
 
         if (isValidate) {
           resolve({
