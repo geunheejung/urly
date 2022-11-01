@@ -1,21 +1,20 @@
+import moment from 'moment';
 import { useState } from 'react';
 
-type TimerReturn = [number, React.Dispatch<React.SetStateAction<number>>, (after: () => void) => void, () => void];
+type TimerReturn = [number, React.Dispatch<React.SetStateAction<number>>, () => void, () => void];
 
 let timer: NodeJS.Timer;
-export const useTimer = (start: number): TimerReturn => {
+
+const useTimer = (start: number): TimerReturn => {
   const [ms, setMs] = useState(start);
 
-  const on = (after: () => void) => {
+  const on = () => {
     const _updateMs = (prev: number) => {
-      const state = prev - 1000;
+      const _ms = prev - 1000;
 
-      if (state === 0) {
-        clearInterval(timer);
-        after();
-      }
+      if (_ms === 0) clearInterval(timer);
 
-      return state;
+      return _ms;
     };
 
     timer = setInterval(() => {
@@ -29,3 +28,7 @@ export const useTimer = (start: number): TimerReturn => {
 
   return [ms, setMs, on, off];
 };
+
+export const formatter = (ms: number, format = 'mm:ss') => moment(ms).format(format);
+
+export default useTimer;

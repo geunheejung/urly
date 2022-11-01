@@ -7,6 +7,7 @@ import { Modal } from '../Modal/Modal';
 import './field.scss';
 
 interface FieldProps {
+  description?: string;
   disabled?: boolean;
   inputProps: InputProps;
   buttonProps?: ButtonProps;
@@ -17,11 +18,12 @@ interface FieldProps {
   onChange?: (value: string) => void;
   onClick?: (value: string, openModal: () => void) => void;
   modalContent?: (value: string) => ReactNode;
-  onConfirm?: (closeModal: () => void) => void;
+  onConfirm?: () => void;
   getLoadingStatus?: (value: string, isOpen: boolean) => boolean;
 }
 
 export const Field = ({
+  description,
   inputProps,
   buttonProps,
   onClick,
@@ -43,7 +45,7 @@ export const Field = ({
   }, [value, isOpen]);
 
   const toggleModal = useCallback(() => {
-    if (onConfirm) return onConfirm(toggle);
+    if (onConfirm) onConfirm();
     toggle();
   }, [isOpen]);
 
@@ -69,6 +71,7 @@ export const Field = ({
       <Left label={label} isRequired={isRequired} />
       <Center>
         <Input onChange={handleChange} {...inputProps} />
+        {description && <div className="description">{description}</div>}
       </Center>
       <Right>{button && <Button label={button} onClick={handleClick} {..._buttonProps} />}</Right>
 

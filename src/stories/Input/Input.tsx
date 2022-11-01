@@ -2,8 +2,8 @@ import { debug } from 'console';
 import React, { useState } from 'react';
 import _throttle from 'lodash/throttle';
 import { signupValidate } from '../../helper';
+import { formatter } from '@/hooks/useTimer';
 import './input.scss';
-import moment from 'moment';
 
 export const enum InputType {
   Id = 'ID',
@@ -80,7 +80,7 @@ export const Input = ({
           onChange={_handleChange}
           {...props}
         />
-        {ms && <span className="timer">{moment(ms).format('mm:ss')}</span>}
+        {ms && <span className="timer">{formatter(ms)}</span>}
       </div>
       {_warning && <div className="warning">{warningMessage ? warningMessage() : warning}</div>}
     </div>

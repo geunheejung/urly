@@ -1,5 +1,11 @@
 import { RULE } from './common';
 
+export enum API_STATUS {
+  REQUEST = 'REQUEST',
+  SUCCESS = 'SUCCESS',
+  FAILURE = 'FAILURE',
+}
+
 interface User {
   index: number;
   id: string;

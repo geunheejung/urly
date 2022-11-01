@@ -1,26 +1,19 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
-import moment from 'moment';
 import _throttle from 'lodash/throttle';
-import { ApiError, confirmEmail, confirmId, IVerifyCodeResponse, verifyCode } from '@/api';
-import { ROUTE, RULE } from '@/common';
-import { openInNewTab, signupValidate } from '@/helper';
 import Button from '@/stories/Button';
 import Field from '@/stories/Field';
-import { InputType } from '@/stories/Input/Input';
 import Modal from '@/stories/Modal';
-import { useInput } from '@/hooks/useInput';
+import { InputType } from '@/stories/Input/Input';
+import useInput from '@/hooks/useInput';
+import useTimer from '@/hooks/useTimer';
+import { ApiError, API_STATUS, confirmEmail, confirmId, IVerifyCodeResponse, verifyCode } from '@/api';
+import { ROUTE, RULE } from '@/common';
+import { openInNewTab, signupValidate } from '@/helper';
 import './signUp.scss';
-import { useTimer } from '@/hooks/useTimer';
-
-enum API_STATUS {
-  REQUEST = 'REQUEST',
-  SUCCESS = 'SUCCESS',
-  FAILURE = 'FAILURE',
-}
 
 const Signup = () => {
-  const DEFAULT_MS = 3000;
+  const DEFAULT_MS = 11113000;
   const [id, , handleId] = useInput('');
   const [pw, , handlePw] = useInput('');
   const [confirmPw, , handleConfirmPw] = useInput('');
@@ -31,8 +24,8 @@ const Signup = () => {
   const [verifyCodeResponse, setVerifyCodeResponse] = useState<IVerifyCodeResponse>();
   const [apiError, setApiError] = useState<ApiError>();
   const [apiStatus, setApiStatus] = useState<API_STATUS>();
-  const [isVerifyCodeConfirm, setIsVerifyCodeConfirm] = useState(false);
   const [ms, setMs, startTimer, clearTimer] = useTimer(DEFAULT_MS);
+  const [isOpen, setIsOpen] = useState(false);
   const [address] = useLocalStorageState('address');
 
   const confirmAgain = (inputType: InputType) => (value: string) => {
@@ -54,21 +47,17 @@ const Signup = () => {
   }, [pw, confirmPw]);
 
   const getVerifyMsg = useCallback(() => {
-    const message = 'Loading...';
+    const { SUCCESS, FAILURE } = API_STATUS;
 
     switch (apiStatus) {
-      case API_STATUS.REQUEST:
-        return message;
-      case API_STATUS.FAILURE:
+      case FAILURE:
         return apiError?.message;
-      case API_STATUS.SUCCESS:
+      case SUCCESS:
         return verifyCodeResponse?.message;
       default:
-        return message;
+        return;
     }
-
-    return;
-  }, [phone, verifyCodeResponse, apiError, apiStatus]);
+  }, [phone, apiStatus, verifyCodeResponse, apiError]);
 
   const clickVerifyCode = useCallback(
     async (value: string, openModal: () => void) => {
@@ -79,37 +68,30 @@ const Signup = () => {
         setVerifyCodeResponse(response);
         setApiStatus(API_STATUS.SUCCESS);
       } catch (error) {
-        failVerifyCode();
+        setApiStatus(API_STATUS.FAILURE);
+        clearVerifyCode();
         if (error instanceof ApiError) setApiError(error);
       } finally {
         openModal();
       }
     },
-    [phone, verifyCodeResponse, apiStatus, clearTimer],
+    [phone, verifyCodeResponse, apiStatus],
   );
 
-  const handlePhoneConfirm = useCallback(
-    (toggleModal: () => void) => {
-      if (apiStatus === API_STATUS.SUCCESS) {
-        startTimer(() => {
-          // 1. 인증번호 데이터 초기화
-          setVerifyCodeResponse(undefined);
-          clearTimer();
-        });
-      }
-      // 여기서 모달을 켜줘야 함.
-      toggleModal();
-    },
-    [phone, apiStatus, ms],
-  );
+  const handlePhoneConfirm = useCallback(() => {
+    if (apiStatus !== API_STATUS.SUCCESS) return;
+
+    startTimer();
+  }, [phone, apiStatus, ms]);
+
+  const handleVerifyCodeConfirm = useCallback(() => {
+    setIsOpen((prev) => !prev);
+  }, [isOpen]);
 
   const getVerifyLoading = (value: string, isOpen: boolean) => isOpen;
 
-  const failVerifyCode = useCallback(() => {
-    setApiStatus(API_STATUS.FAILURE);
-    setVerifyCodeResponse(undefined);
-    clearTimer();
-  }, [apiStatus, verifyCodeResponse, clearTimer]);
+  // confirmVerifyCode
+
   /* 
   const handleAddressSearch = useCallback(() => {
     openInNewTab(ROUTE.SHIPPING);
@@ -117,6 +99,17 @@ const Signup = () => {
   }, [isOpen]);
   */
 
+  const clearVerifyCode = useCallback(() => {
+    setVerifyCodeResponse(undefined);
+    clearTimer();
+  }, [ms, verifyCodeResponse]);
+
+  useEffect(() => {
+    if (ms === 0) {
+      clearVerifyCode();
+      setIsOpen(true);
+    }
+  }, [ms]);
   return (
     <div className="signup">
       <div className="title">회원가입</div>
@@ -198,6 +191,7 @@ const Signup = () => {
         />
         {verifyCodeResponse?.status === 200 && (
           <Field
+            description="인증번호가 오지 않는다면, 통신사 스팸 차단 서비스 혹은 휴대폰 번호 차단 여부를 확인해주세요. (마켓컬리 1644-1107)"
             inputProps={{
               maxLength: 6,
               ms,
@@ -208,12 +202,16 @@ const Signup = () => {
               disabled: !code,
             }}
             onChange={handleCode}
+            // onClick={confirmVerifyCode}
           />
         )}
       </div>
-      {/* <Button onClick={handleAddressSearch}>
-        주소 검색
-      </Button>       */}
+
+      <Modal isOpen={isOpen} onConfirm={handleVerifyCodeConfirm}>
+        유효시간이 만료되었습니다.
+        <br />
+        다시 시도해 주세요.
+      </Modal>
     </div>
   );
 };
