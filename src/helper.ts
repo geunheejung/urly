@@ -51,3 +51,14 @@ export const signupValidate = (value: string, inputType?: InputType) => {
 
   return message;
 };
+
+export const code = () => {
+  let num = '';
+  for (let i = 0; i < 6; i++) {
+    const n = Math.floor(Math.random() * (10 - 1) + 1) + '';
+
+    if (n) num += n;
+  }
+
+  return num;
+};

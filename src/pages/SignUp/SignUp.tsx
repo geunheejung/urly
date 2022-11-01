@@ -7,7 +7,7 @@ import Modal from '@/stories/Modal';
 import { InputType } from '@/stories/Input/Input';
 import useInput from '@/hooks/useInput';
 import useTimer from '@/hooks/useTimer';
-import { ApiError, API_STATUS, confirmEmail, confirmId, IVerifyCodeResponse, verifyCode } from '@/api';
+import { ApiError, API_STATUS, confirmEmail, confirmId, validatePhoneCode, IResponse, verifyCode } from '@/api';
 import { ROUTE, RULE } from '@/common';
 import { openInNewTab, signupValidate } from '@/helper';
 import './signUp.scss';
@@ -21,7 +21,8 @@ const Signup = () => {
   const [email, , handleEmail] = useInput('');
   const [phone, , handlePhone] = useInput('');
   const [code, , handleCode] = useInput('');
-  const [verifyCodeResponse, setVerifyCodeResponse] = useState<IVerifyCodeResponse>();
+  const [verifyCodeResponse, setVerifyCodeResponse] = useState<IResponse>();
+  const [isValidated, setIsValidated] = useState(false);
   const [apiError, setApiError] = useState<ApiError>();
   const [apiStatus, setApiStatus] = useState<API_STATUS>();
   const [ms, setMs, startTimer, clearTimer] = useTimer(DEFAULT_MS);
@@ -46,20 +47,7 @@ const Signup = () => {
     return message;
   }, [pw, confirmPw]);
 
-  const getVerifyMsg = useCallback(() => {
-    const { SUCCESS, FAILURE } = API_STATUS;
-
-    switch (apiStatus) {
-      case FAILURE:
-        return apiError?.message;
-      case SUCCESS:
-        return verifyCodeResponse?.message;
-      default:
-        return;
-    }
-  }, [phone, apiStatus, verifyCodeResponse, apiError]);
-
-  const clickVerifyCode = useCallback(
+  const handleVerifyCode = useCallback(
     async (value: string, openModal: () => void) => {
       try {
         await setMs(DEFAULT_MS);
@@ -67,10 +55,10 @@ const Signup = () => {
         const response = await verifyCode({ phone });
         setVerifyCodeResponse(response);
         setApiStatus(API_STATUS.SUCCESS);
-      } catch (error) {
+      } catch (err) {
         setApiStatus(API_STATUS.FAILURE);
         clearVerifyCode();
-        if (error instanceof ApiError) setApiError(error);
+        if (err instanceof ApiError) setApiError(err);
       } finally {
         openModal();
       }
@@ -85,12 +73,31 @@ const Signup = () => {
   }, [phone, apiStatus, ms]);
 
   const handleVerifyCodeConfirm = useCallback(() => {
+    if (apiStatus === API_STATUS.SUCCESS) {
+      clearVerifyCode();
+      return;
+    }
+
     setIsOpen((prev) => !prev);
-  }, [isOpen]);
+  }, [isOpen, apiStatus]);
 
-  const getVerifyLoading = (value: string, isOpen: boolean) => isOpen;
-
-  // confirmVerifyCode
+  const handleConfirmCode = useCallback(
+    async (value: string, openModal: () => void) => {
+      try {
+        await setApiStatus(API_STATUS.REQUEST);
+        const response = await validatePhoneCode({ phone, code });
+        setVerifyCodeResponse(response);
+        setApiStatus(API_STATUS.SUCCESS);
+        setIsValidated(true);
+      } catch (err) {
+        setApiStatus(API_STATUS.FAILURE);
+        if (err instanceof ApiError) setApiError(err);
+      } finally {
+        openModal();
+      }
+    },
+    [code, apiStatus, verifyCodeResponse, apiError, ms],
+  );
 
   /* 
   const handleAddressSearch = useCallback(() => {
@@ -104,12 +111,32 @@ const Signup = () => {
     clearTimer();
   }, [ms, verifyCodeResponse]);
 
+  const getApiErrorMsg = useCallback(() => {
+    const { SUCCESS, FAILURE } = API_STATUS;
+
+    switch (apiStatus) {
+      case FAILURE:
+        return apiError?.message;
+      case SUCCESS:
+        return verifyCodeResponse?.message;
+      default:
+        return;
+    }
+  }, [phone, apiStatus, verifyCodeResponse, apiError]);
+
+  // const getVerifyMsg = useCallback(() => {}, []);
+
+  const getLoadingBy = (isOpen: boolean) => isOpen;
+
   useEffect(() => {
     if (ms === 0) {
       clearVerifyCode();
       setIsOpen(true);
     }
   }, [ms]);
+
+  const _handleVerifyCode = _throttle(handleVerifyCode, 300);
+  const _handleConfirmCode = _throttle(handleConfirmCode, 300);
   return (
     <div className="signup">
       <div className="title">회원가입</div>
@@ -184,10 +211,10 @@ const Signup = () => {
           button="인증번호 받기"
           buttonProps={{ disabled: !phone }}
           onChange={handlePhone}
-          onClick={_throttle(clickVerifyCode, 300)}
+          onClick={_handleVerifyCode}
           onConfirm={handlePhoneConfirm}
-          modalContent={getVerifyMsg}
-          getLoadingStatus={getVerifyLoading}
+          modalContent={getApiErrorMsg}
+          getLoadingStatus={getLoadingBy}
         />
         {verifyCodeResponse?.status === 200 && (
           <Field
@@ -202,7 +229,10 @@ const Signup = () => {
               disabled: !code,
             }}
             onChange={handleCode}
-            // onClick={confirmVerifyCode}
+            onClick={_handleConfirmCode}
+            onConfirm={handleVerifyCodeConfirm}
+            modalContent={getApiErrorMsg}
+            getLoadingStatus={getLoadingBy}
           />
         )}
       </div>

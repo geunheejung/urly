@@ -1,4 +1,5 @@
 import { RULE } from './common';
+import { code } from './helper';
 
 export enum API_STATUS {
   REQUEST = 'REQUEST',
@@ -54,13 +55,15 @@ export class ApiError extends Error {
 interface IVerificationCode {
   phone: string;
 }
-export interface IVerifyCodeResponse {
+export interface IResponse {
   status: number;
   message: string;
   value?: string;
 }
 
-export const verifyCode = (payload: IVerificationCode): Promise<IVerifyCodeResponse> => {
+const user: { [phone: string]: string } = {};
+
+export const verifyCode = (payload: IVerificationCode): Promise<IResponse> => {
   // 전화번호를 받는다.
   // 양식을 체크한다.
   // 임의로 타이머 걸고, 그 후에 인증번호 리턴
@@ -71,15 +74,45 @@ export const verifyCode = (payload: IVerificationCode): Promise<IVerifyCodeRespo
       fetch('https://jsonplaceholder.typicode.com/todos/1').then((res) => {
         const isValidate = Array.isArray(phone.match(RULE.PHONE));
 
-        if (isValidate) {
-          resolve({
-            status: 200,
-            message: '인증번호가 발송되었습니다.',
-            value: '123456',
-          });
-        }
+        if (!isValidate) reject(new ApiError('잘못된 휴대폰 번호 입니다. 확인 후 다시 시도해 주세요.', '400'));
 
-        reject(new ApiError('잘못된 휴대폰 번호 입니다. 확인 후 다시 시도해 주세요.', '400'));
+        const value = code();
+
+        user[phone] = value;
+        console.log(value);
+        resolve({
+          status: 200,
+          message: '인증번호가 발송되었습니다.',
+          value,
+        });
+      });
+    } catch (err) {
+      throw new ApiError('다시 시도해주세요.', '400');
+    }
+  });
+};
+
+export interface IValidatePhoneCode {
+  phone: string;
+  code: string;
+}
+export const validatePhoneCode = (payload: IValidatePhoneCode): Promise<IResponse> => {
+  // 1. 전화번호, 인증번호를 받는다.
+  // 2. user 객체에서 전화번호로 접근한다.
+  // 3. 전달받은 인증번호와 전송한 인증번호가 서로 맞는지 확인한다.
+
+  return new Promise((resolve, reject) => {
+    try {
+      fetch('https://jsonplaceholder.typicode.com/todos/1').then((res) => {
+        const { phone, code } = payload;
+        const originalCode = user[phone];
+
+        if (code !== originalCode) reject(new ApiError('잘못된 인증 코드 입니다.', '400'));
+
+        resolve({
+          status: 200,
+          message: '인증 완료 됐습니다.',
+        });
       });
     } catch (err) {
       throw new ApiError('다시 시도해주세요.', '400');
