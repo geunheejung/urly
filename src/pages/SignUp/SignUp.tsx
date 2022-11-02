@@ -11,6 +11,8 @@ import { ROUTE, RULE } from '@/common';
 import { openInNewTab, signupValidate } from '@/helper';
 import './signUp.scss';
 import { IAddress } from '../ShippingAddress/Result';
+import { CheckList } from '@/stories/Check/List/CheckList';
+import { man, none, woman } from '@/stories/Check/Check.stories';
 
 const Signup = () => {
   const [id, , handleId] = useInput('');
@@ -123,6 +125,13 @@ const Signup = () => {
             <div className="description">배송지에 따라 상품 정보가 달라질 수 있습니다.</div>
           </Field.Center>
           <Field.Right>{address && <Button label="재검색" onClick={handleSearchAddress} />}</Field.Right>
+        </Field.Wrapper>
+        <Field.Wrapper>
+          <Field.Left label="성별" />
+          <Field.Center>
+            <CheckList checkList={[man, woman, none]} />
+          </Field.Center>
+          <Field.Right />
         </Field.Wrapper>
       </div>
     </div>

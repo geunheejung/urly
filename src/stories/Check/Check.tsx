@@ -1,44 +1,30 @@
-import React, {useCallback, useState} from 'react';
+import React, { useCallback, useState } from 'react';
 import classNames from 'classnames';
 import './check.scss';
 
-interface CheckProps {
+export interface ICheckProps {
+  isChecked: boolean;
   name: string;
   value: string;
-  htmlFor: string;
+  id: string;
   text: string;
+  onClick?: () => void;
 }
 
-export const Check = ({
-  text,
-  htmlFor,
-  name,
-  value,
-}: CheckProps) => {
-  const [ isChecked, setIsChecked ] = useState(false);
-
+export const Check = ({ isChecked, text, id, name, value, onClick }: ICheckProps) => {
   const handleCheck = useCallback(() => {
-    setIsChecked(prev => {
-      return !prev;
-    });
-  }, [ isChecked ]);
+    if (onClick) onClick();
+  }, [isChecked]);
 
   return (
     <div className="storybook-check">
-      <label htmlFor={htmlFor}>
-        <input
-          id={htmlFor}
-          type="radio"
-          className="checkbox"
-          name={name}
-          value={value}
-          onClick={handleCheck}
-        />
+      <label htmlFor={id}>
+        <input id={id} type="radio" className="checkbox" name={name} value={value} onClick={handleCheck} />
         <div className={classNames('outer-radio', { selected: isChecked })}>
           <div className={classNames('inner-radio', { selected: isChecked })} />
         </div>
-        <span className="description">{text}</span>
+        <span className="label">{text}</span>
       </label>
     </div>
-  )
+  );
 };

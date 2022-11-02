@@ -1,10 +1,14 @@
-@import "../../Root";
+@import '../../Root';
 
 .storybook-check {
-
   & > label {
     display: flex;
     align-items: center;
+
+    & > span {
+      margin: 0 0 0 12px;
+      font-size: 14px;
+    }
   }
 
   & .checkbox {
@@ -13,11 +17,6 @@
     width: 1px;
     height: 1px;
     clip: rect(0px, 0px, 0px, 0px);
-  }
-
-  & .description {
-    margin: 0 0 0 12px;
-    font-size: 14px;
   }
 
   & .outer-radio {

@@ -83,7 +83,7 @@ export const Field = ({
 };
 
 interface CompoundProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
 }
 
