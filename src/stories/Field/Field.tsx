@@ -88,8 +88,9 @@ interface CompoundProps {
 }
 
 const Wrapper = ({ className = '', children }: CompoundProps) => (
-  <div className={`storybook-field ${className}`}>{children}</div>
+  <div className={classNames('storybook-field', { [className]: !!className })}>{children}</div>
 );
+
 const Left = (props: LabelProps) => (
   <div className="left">
     <Label {...props} />

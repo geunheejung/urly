@@ -1,31 +1,21 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
-import _throttle from 'lodash/throttle';
 import Button from '@/stories/Button';
 import Field from '@/stories/Field';
-import Modal from '@/stories/Modal';
+import VerifyPhone from '@/containers/VerifyPhone';
 import { InputType } from '@/stories/Input/Input';
 import useInput from '@/hooks/useInput';
-import useTimer from '@/hooks/useTimer';
-import { ApiError, API_STATUS, confirmEmail, confirmId, validatePhoneCode, IResponse, verifyCode } from '@/api';
+import { confirmEmail, confirmId } from '@/api';
 import { ROUTE, RULE } from '@/common';
 import { openInNewTab, signupValidate } from '@/helper';
 import './signUp.scss';
 
 const Signup = () => {
-  const DEFAULT_MS = 11113000;
   const [id, , handleId] = useInput('');
   const [pw, , handlePw] = useInput('');
   const [confirmPw, , handleConfirmPw] = useInput('');
   const [name, , handleName] = useInput('');
   const [email, , handleEmail] = useInput('');
-  const [phone, , handlePhone] = useInput('');
-  const [code, , handleCode] = useInput('');
-  const [verifyCodeResponse, setVerifyCodeResponse] = useState<IResponse>();
-  const [isValidated, setIsValidated] = useState(false);
-  const [apiError, setApiError] = useState<ApiError>();
-  const [apiStatus, setApiStatus] = useState<API_STATUS>();
-  const [ms, setMs, startTimer, clearTimer] = useTimer(DEFAULT_MS);
   const [isOpen, setIsOpen] = useState(false);
   const [address] = useLocalStorageState('address');
 
@@ -47,57 +37,9 @@ const Signup = () => {
     return message;
   }, [pw, confirmPw]);
 
-  const handleVerifyCode = useCallback(
-    async (value: string, openModal: () => void) => {
-      try {
-        await setMs(DEFAULT_MS);
-        await setApiStatus(API_STATUS.REQUEST);
-        const response = await verifyCode({ phone });
-        setVerifyCodeResponse(response);
-        setApiStatus(API_STATUS.SUCCESS);
-      } catch (err) {
-        setApiStatus(API_STATUS.FAILURE);
-        clearVerifyCode();
-        if (err instanceof ApiError) setApiError(err);
-      } finally {
-        openModal();
-      }
-    },
-    [phone, verifyCodeResponse, apiStatus],
-  );
-
-  const handlePhoneConfirm = useCallback(() => {
-    if (apiStatus !== API_STATUS.SUCCESS) return;
-
-    startTimer();
-  }, [phone, apiStatus, ms]);
-
-  const handleVerifyCodeConfirm = useCallback(() => {
-    if (apiStatus === API_STATUS.SUCCESS) {
-      clearVerifyCode();
-      return;
-    }
-
-    setIsOpen((prev) => !prev);
-  }, [isOpen, apiStatus]);
-
-  const handleConfirmCode = useCallback(
-    async (value: string, openModal: () => void) => {
-      try {
-        await setApiStatus(API_STATUS.REQUEST);
-        const response = await validatePhoneCode({ phone, code });
-        setVerifyCodeResponse(response);
-        setApiStatus(API_STATUS.SUCCESS);
-        setIsValidated(true);
-      } catch (err) {
-        setApiStatus(API_STATUS.FAILURE);
-        if (err instanceof ApiError) setApiError(err);
-      } finally {
-        openModal();
-      }
-    },
-    [code, apiStatus, verifyCodeResponse, apiError, ms],
-  );
+  const handleSearchAddress = useCallback(() => {
+    // 주소 검색 modal open
+  }, []);
 
   /* 
   const handleAddressSearch = useCallback(() => {
@@ -106,37 +48,6 @@ const Signup = () => {
   }, [isOpen]);
   */
 
-  const clearVerifyCode = useCallback(() => {
-    setVerifyCodeResponse(undefined);
-    clearTimer();
-  }, [ms, verifyCodeResponse]);
-
-  const getApiErrorMsg = useCallback(() => {
-    const { SUCCESS, FAILURE } = API_STATUS;
-
-    switch (apiStatus) {
-      case FAILURE:
-        return apiError?.message;
-      case SUCCESS:
-        return verifyCodeResponse?.message;
-      default:
-        return;
-    }
-  }, [phone, apiStatus, verifyCodeResponse, apiError]);
-
-  // const getVerifyMsg = useCallback(() => {}, []);
-
-  const getLoadingBy = (isOpen: boolean) => isOpen;
-
-  useEffect(() => {
-    if (ms === 0) {
-      clearVerifyCode();
-      setIsOpen(true);
-    }
-  }, [ms]);
-
-  const _handleVerifyCode = _throttle(handleVerifyCode, 300);
-  const _handleConfirmCode = _throttle(handleConfirmCode, 300);
   return (
     <div className="signup">
       <div className="title">회원가입</div>
@@ -188,7 +99,7 @@ const Signup = () => {
           onChange={handleName}
         />
         <Field
-          label="이메일˜"
+          label="이메일"
           isRequired
           inputProps={{
             inputType: InputType.Email,
@@ -199,49 +110,18 @@ const Signup = () => {
           button="중복확인"
           modalContent={confirmAgain(InputType.Email)}
         />
-        <Field
-          label="휴대폰"
-          isRequired
-          inputProps={{
-            inputType: InputType.Phone,
-            placeholder: '숫자만 입력해주세요',
-            maxLength: 11,
-            ignore: RULE.EXCEPT_NUM,
-          }}
-          button="인증번호 받기"
-          buttonProps={{ disabled: !phone }}
-          onChange={handlePhone}
-          onClick={_handleVerifyCode}
-          onConfirm={handlePhoneConfirm}
-          modalContent={getApiErrorMsg}
-          getLoadingStatus={getLoadingBy}
-        />
-        {verifyCodeResponse?.status === 200 && (
-          <Field
-            description="인증번호가 오지 않는다면, 통신사 스팸 차단 서비스 혹은 휴대폰 번호 차단 여부를 확인해주세요. (마켓컬리 1644-1107)"
-            inputProps={{
-              maxLength: 6,
-              ms,
-              ignore: RULE.EXCEPT_NUM,
-            }}
-            button="인증번호 확인"
-            buttonProps={{
-              disabled: !code,
-            }}
-            onChange={handleCode}
-            onClick={_handleConfirmCode}
-            onConfirm={handleVerifyCodeConfirm}
-            modalContent={getApiErrorMsg}
-            getLoadingStatus={getLoadingBy}
-          />
-        )}
-      </div>
+        <VerifyPhone />
 
-      <Modal isOpen={isOpen} onConfirm={handleVerifyCodeConfirm}>
-        유효시간이 만료되었습니다.
-        <br />
-        다시 시도해 주세요.
-      </Modal>
+        <Field.Wrapper>
+          <Field.Left label="주소" isRequired />
+          <Field.Center>
+            <Button onClick={handleSearchAddress}>주소 검색</Button>
+          </Field.Center>
+          <Field.Right>
+            <Button>재검색</Button>
+          </Field.Right>
+        </Field.Wrapper>
+      </div>
     </div>
   );
 };

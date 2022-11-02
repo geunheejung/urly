@@ -1,5 +1,5 @@
 import { debug } from 'console';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import _throttle from 'lodash/throttle';
 import { signupValidate } from '../../helper';
 import { formatter } from '@/hooks/useTimer';
@@ -68,12 +68,16 @@ export const Input = ({
 
   const _warning = warningMessage || warning;
 
+  useEffect(() => {
+    if (value !== defaultValue) setValue(defaultValue);
+  }, [defaultValue]);
+
   return (
     <div className={['storybook-input', mode].join(' ')}>
       <div className="field">
         <input
           type={type}
-          value={value || defaultValue}
+          value={value}
           readOnly={readOnly}
           disabled={disabled}
           maxLength={maxLength}
