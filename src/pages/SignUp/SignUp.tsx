@@ -4,11 +4,13 @@ import Button from '@/stories/Button';
 import Field from '@/stories/Field';
 import VerifyPhone from '@/containers/VerifyPhone';
 import { InputType } from '@/stories/Input/Input';
+import Input from '@/stories/Input';
 import useInput from '@/hooks/useInput';
 import { confirmEmail, confirmId } from '@/api';
 import { ROUTE, RULE } from '@/common';
 import { openInNewTab, signupValidate } from '@/helper';
 import './signUp.scss';
+import { IAddress } from '../ShippingAddress/Result';
 
 const Signup = () => {
   const [id, , handleId] = useInput('');
@@ -17,7 +19,7 @@ const Signup = () => {
   const [name, , handleName] = useInput('');
   const [email, , handleEmail] = useInput('');
   const [isOpen, setIsOpen] = useState(false);
-  const [address] = useLocalStorageState('address');
+  const [address] = useLocalStorageState<IAddress>('address');
 
   const confirmAgain = (inputType: InputType) => (value: string) => {
     const message = signupValidate(value, inputType);
@@ -38,15 +40,8 @@ const Signup = () => {
   }, [pw, confirmPw]);
 
   const handleSearchAddress = useCallback(() => {
-    // 주소 검색 modal open
-  }, []);
-
-  /* 
-  const handleAddressSearch = useCallback(() => {
     openInNewTab(ROUTE.SHIPPING);
-    setIsOpen((prevState) => !prevState);
   }, [isOpen]);
-  */
 
   return (
     <div className="signup">
@@ -112,14 +107,22 @@ const Signup = () => {
         />
         <VerifyPhone />
 
-        <Field.Wrapper>
+        <Field.Wrapper className="address-field">
           <Field.Left label="주소" isRequired />
           <Field.Center>
-            <Button onClick={handleSearchAddress}>주소 검색</Button>
+            {address ? (
+              <>
+                <Input defaultValue={address.mainAddress} readOnly />
+                <Input defaultValue={address.detailAddress} placeholder="나머지 주소를 입력해주세요" />
+                <div className="description">택배배송</div>
+              </>
+            ) : (
+              <Button label="주소 검색" onClick={handleSearchAddress} />
+            )}
+
+            <div className="description">배송지에 따라 상품 정보가 달라질 수 있습니다.</div>
           </Field.Center>
-          <Field.Right>
-            <Button>재검색</Button>
-          </Field.Right>
+          <Field.Right>{address && <Button label="재검색" onClick={handleSearchAddress} />}</Field.Right>
         </Field.Wrapper>
       </div>
     </div>
