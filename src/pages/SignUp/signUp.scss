@@ -19,7 +19,7 @@
       & span {
         color: $text4;
       }
-
+      box-sizing: border-box;
       padding: 0 0 10px 0;
       border-bottom: 2px solid $primary3;
       font-size: 12px;
@@ -35,5 +35,11 @@
         margin: 0 0 12px 0;
       }
     }
+  }
+
+  & .warning {
+    margin: 10px 0 0 0;
+    font-size: 13px;
+    color: $text4;
   }
 }

@@ -9,10 +9,11 @@ import useInput from '@/hooks/useInput';
 import { confirmEmail, confirmId } from '@/api';
 import { ROUTE, RULE } from '@/common';
 import { openInNewTab, signupValidate } from '@/helper';
-import './signUp.scss';
 import { IAddress } from '../ShippingAddress/Result';
 import { CheckList } from '@/stories/Check/List/CheckList';
 import { man, none, woman } from '@/stories/Check/Check.stories';
+import './signUp.scss';
+import BirthInput from '@/components/BirthInput';
 
 const Signup = () => {
   const [id, , handleId] = useInput('');
@@ -52,6 +53,7 @@ const Signup = () => {
         <div className="description">
           <span>*</span> 필수입력사항
         </div>
+
         <Field
           label="아이디"
           isRequired
@@ -133,6 +135,7 @@ const Signup = () => {
           </Field.Center>
           <Field.Right />
         </Field.Wrapper>
+        <BirthInput />
       </div>
     </div>
   );

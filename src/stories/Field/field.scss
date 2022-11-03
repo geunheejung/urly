@@ -1,9 +1,10 @@
 @import '../../Root';
 
 .storybook-field {
-  display: inline-flex;
+  display: flex;
   width: 100%;
   padding: 10px 20px;
+  box-sizing: border-box;
 
   & .left {
     padding: 12px 0 0 0;
