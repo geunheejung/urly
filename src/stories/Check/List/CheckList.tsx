@@ -24,9 +24,14 @@ export const CheckList = ({ checkList }: ICheckListProps) => {
 
   return (
     <div className="checkList-wrapper">
-      {_checkList.map((checkProps) => (
-        <Check key={checkProps.id} onClick={() => handleClick(checkProps)} {...checkProps} />
-      ))}
+      {_checkList.map((checkProps) => {
+        const _handleClick = () => {
+          const { onClick, value } = checkProps;
+          if (onClick) onClick(value);
+          handleClick(checkProps);
+        };
+        return <Check {...checkProps} key={checkProps.id} onClick={_handleClick} />;
+      })}
     </div>
   );
 };

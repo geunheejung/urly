@@ -8,12 +8,12 @@ export interface ICheckProps {
   value: string;
   id: string;
   text: string;
-  onClick?: () => void;
+  onClick?: (value: string) => void;
 }
 
 export const Check = ({ isChecked, text, id, name, value, onClick }: ICheckProps) => {
   const handleCheck = useCallback(() => {
-    if (onClick) onClick();
+    if (onClick) onClick(value);
   }, [isChecked]);
 
   return (

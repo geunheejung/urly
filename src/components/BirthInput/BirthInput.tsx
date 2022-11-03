@@ -1,9 +1,8 @@
 import React, { useCallback } from 'react';
-import Field from '@/stories/Field';
+import moment from 'moment';
 import Input from '@/stories/Input';
 import useInput from '@/hooks/useInput';
 import './birthInput.scss';
-import moment from 'moment';
 
 const BirthInput = () => {
   const [year, , updateYear] = useInput('');
@@ -27,20 +26,16 @@ const BirthInput = () => {
   }, [year, month, day]);
 
   return (
-    <Field.Wrapper className="birth-field">
-      <Field.Left label="생년월일" />
-      <Field.Center>
-        <div className="input-wrapper">
-          <Input type="text" maxLength={4} placeholder="YYYY" onChange={updateYear} />
-          <span />
-          <Input type="text" maxLength={2} placeholder="MM" onChange={updateMonth} />
-          <span />
-          <Input type="text" maxLength={2} placeholder="DD" onChange={updateDay} />
-        </div>
-        <p className="warning">{validate()}</p>
-      </Field.Center>
-      <Field.Right />
-    </Field.Wrapper>
+    <>
+      <div className="birth-input-wrapper">
+        <Input type="text" maxLength={4} placeholder="YYYY" onChange={updateYear} />
+        <span />
+        <Input type="text" maxLength={2} placeholder="MM" onChange={updateMonth} />
+        <span />
+        <Input type="text" maxLength={2} placeholder="DD" onChange={updateDay} />
+      </div>
+      <p className="warning">{validate()}</p>
+    </>
   );
 };
 

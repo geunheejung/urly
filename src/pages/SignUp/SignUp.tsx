@@ -15,6 +15,11 @@ import { man, none, woman } from '@/stories/Check/Check.stories';
 import './signUp.scss';
 import BirthInput from '@/components/BirthInput';
 
+enum CheckValue {
+  Recommend = 'RECOMMEND',
+  Event = 'EVENT',
+}
+
 const Signup = () => {
   const [id, , handleId] = useInput('');
   const [pw, , handlePw] = useInput('');
@@ -23,6 +28,8 @@ const Signup = () => {
   const [email, , handleEmail] = useInput('');
   const [isOpen, setIsOpen] = useState(false);
   const [address] = useLocalStorageState<IAddress>('address');
+  const [additionalValue, setAdditionalValue] = useState('');
+  const [joinExtra, setJoinExtra, updateJoinExtra] = useInput('');
 
   const confirmAgain = (inputType: InputType) => (value: string) => {
     const message = signupValidate(value, inputType);
@@ -45,6 +52,14 @@ const Signup = () => {
   const handleSearchAddress = useCallback(() => {
     openInNewTab(ROUTE.SHIPPING);
   }, [isOpen]);
+
+  const clickAdditional = useCallback(
+    (value: string) => {
+      setAdditionalValue(value);
+      setJoinExtra('');
+    },
+    [additionalValue],
+  );
 
   return (
     <div className="signup">
@@ -135,7 +150,69 @@ const Signup = () => {
           </Field.Center>
           <Field.Right />
         </Field.Wrapper>
-        <BirthInput />
+        <Field.Wrapper className="birth-field">
+          <Field.Left label="생년월일" />
+          <Field.Center>
+            <BirthInput />
+          </Field.Center>
+          <Field.Right />
+        </Field.Wrapper>
+        <Field.Wrapper>
+          <Field.Left label="추가입력 사항" />
+          <Field.Center>
+            <CheckList
+              checkList={[
+                {
+                  isChecked: false,
+                  text: '친구초대 추천인 아이디',
+                  id: 'additional-recommender',
+                  name: 'joinExtraInputType',
+                  value: CheckValue.Recommend,
+                  onClick: clickAdditional,
+                },
+                {
+                  isChecked: false,
+                  text: '참여 이벤트명',
+                  id: 'additional-event',
+                  name: 'joinExtraInputType',
+                  value: CheckValue.Event,
+                  onClick: clickAdditional,
+                },
+              ]}
+            />
+          </Field.Center>
+          <Field.Right />
+        </Field.Wrapper>
+        {additionalValue && (
+          <Field.Wrapper>
+            <Field.Left />
+            <Field.Center>
+              <Input
+                onChange={updateJoinExtra}
+                placeholder={
+                  additionalValue === CheckValue.Recommend
+                    ? '추천인 아이디를 입력해주세요.'
+                    : '참여 이벤트명을 입력해 주세요.'
+                }
+                defaultValue={joinExtra}
+              />
+              <p className="description">
+                {additionalValue === CheckValue.Recommend ? (
+                  '가입 후 7일 내 첫 주문 배송완료 시, 친구초대 이벤트 적립금이 지급됩니다.'
+                ) : (
+                  <>
+                    '추천인 아이디와 참여 이벤트명 중 하나만 선택 가능합니다.
+                    <br />
+                    가입 이후는 수정이 불가능 합니다.
+                    <br />
+                    대소문자 및 띄어쓰기에 유의해주세요.'
+                  </>
+                )}
+              </p>
+            </Field.Center>
+            <Field.Right />
+          </Field.Wrapper>
+        )}
       </div>
     </div>
   );
