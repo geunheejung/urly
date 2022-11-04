@@ -26,7 +26,7 @@ export const CheckList = ({ checkList }: ICheckListProps) => {
     <div className="checkList-wrapper">
       {_checkList.map((checkProps) => {
         const _handleClick = () => {
-          const { onClick, value } = checkProps;
+          const { onClick, value = '' } = checkProps;
           if (onClick) onClick(value);
           handleClick(checkProps);
         };
