@@ -1,4 +1,4 @@
-import React, { Children, ReactNode, useCallback, useState } from 'react';
+import React, { Children, MouseEventHandler, ReactNode, useCallback, useState } from 'react';
 import classNames from 'classnames';
 import { AiFillCheckCircle, AiOutlineCheckCircle } from 'react-icons/ai';
 import './check.scss';
@@ -16,7 +16,7 @@ export interface ICheckProps {
   text?: string;
   type?: ToggleType;
   children?: ReactNode;
-  onClick?: (value: string) => void;
+  onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
 }
 
 export const Check = ({
@@ -30,9 +30,12 @@ export const Check = ({
   onClick,
   children,
 }: ICheckProps) => {
-  const handleCheck = useCallback(() => {
-    if (onClick) onClick(value || '');
-  }, [isChecked]);
+  const handleCheck = useCallback(
+    (e: React.MouseEvent<HTMLInputElement>) => {
+      if (onClick) onClick(e);
+    },
+    [isChecked],
+  );
 
   const renderToggle = () => {
     switch (type) {

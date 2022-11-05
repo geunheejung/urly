@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import Button from '@/stories/Button';
 import Field from '@/stories/Field';
@@ -16,6 +16,7 @@ import BirthInput from '@/components/BirthInput';
 import Check from '@/stories/Check';
 import './signUp.scss';
 import { ToggleType } from '@/stories/Check/Check';
+import Terms from '@/containers/Terms';
 
 enum CheckValue {
   Recommend = 'RECOMMEND',
@@ -56,7 +57,7 @@ const Signup = () => {
   }, [isOpen]);
 
   const clickAdditional = useCallback(
-    (value: string) => {
+    ({ currentTarget: { value } }: React.MouseEvent<HTMLInputElement>) => {
       setAdditionalValue(value);
       setJoinExtra('');
     },
@@ -219,42 +220,7 @@ const Signup = () => {
         <Field.Wrapper className="all-agree-field">
           <Field.Left label="이용약관동의" isRequired />
           <Field.Center>
-            <div className="field">
-              <Check.Box id="TermsAgreeAll">
-                <span>전체 동의합니다.</span>
-              </Check.Box>
-              <p className="description">
-                선택항목에 동의하지 않은 경우도 회원가입 및 일반적인 서비스를 이용할 수 있습니다.
-              </p>
-            </div>
-
-            <Check.Box id="TermsAgreeAll" className="field">
-              <span>이용약관 동의</span>
-              <span className="required">(필수)</span>
-            </Check.Box>
-
-            <Check.Box id="TermsAgreeAll" className="field">
-              <span>개인정보 수집∙이용 동의</span>
-              <span className="required">(필수)</span>
-            </Check.Box>
-
-            <Check.Box id="TermsAgreeAll" className="field">
-              <span>개인정보 수집∙이용 동의</span>
-              <span className="required">(선택)</span>
-            </Check.Box>
-            <Check.Box id="TermsAgreeAll" className="field">
-              <span>무료배송, 할인쿠폰 등 혜택/정보 수신 동의</span>
-              <span className="required">(선택)</span>
-            </Check.Box>
-            <div className="sub-agree field">
-              <Check.Box id="OptionalTermsOfSms" text="SMS" className="field" />
-              <Check.Box id="OptionalTermsOfMailing" text="이메일" className="field" />
-              <p className="description">동의 시 한 달간 [5%적립] + [2만원 이상 무료배송] 첫 주문 후 안내</p>
-            </div>
-            <Check.Box id="TermsAgreeAll" className="field">
-              <span>본인은 만 14세 이상입니다.</span>
-              <span className="required">(필수)</span>
-            </Check.Box>
+            <Terms />
           </Field.Center>
         </Field.Wrapper>
       </div>
