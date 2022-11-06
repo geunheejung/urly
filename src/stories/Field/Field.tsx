@@ -2,7 +2,7 @@ import React, { ReactNode, useCallback, useState } from 'react';
 import classNames from 'classnames';
 import { Label, LabelProps } from '../Label/Label';
 import { Button, ButtonProps } from '../Button/Button';
-import { Input, InputProps } from '../Input/Input';
+import Input, { InputProps } from '../Input/Input';
 import { Modal } from '../Modal/Modal';
 import './field.scss';
 
@@ -17,12 +17,12 @@ interface FieldProps {
   button?: string;
   onChange?: (value: string) => void;
   onClick?: (value: string, openModal: () => void) => void;
-  modalContent?: (value: string) => ReactNode;
+  modalMessage?: string;
   onConfirm?: () => void;
   getLoadingStatus?: (isOpen: boolean) => boolean;
 }
 
-export const Field = ({
+const Field = ({
   description,
   inputProps,
   buttonProps,
@@ -31,7 +31,7 @@ export const Field = ({
   className,
   isRequired = false,
   button,
-  modalContent,
+  modalMessage,
   onChange,
   onConfirm,
   getLoadingStatus,
@@ -52,7 +52,6 @@ export const Field = ({
   const handleChange = useCallback(
     (value: string) => {
       setValue(value);
-
       if (onChange) onChange(value);
     },
     [value],
@@ -76,7 +75,7 @@ export const Field = ({
       <Right>{button && <Button label={button} onClick={handleClick} {..._buttonProps} />}</Right>
 
       <Modal isOpen={isOpen} onConfirm={toggleModal}>
-        {modalContent && modalContent(value)}
+        {modalMessage}
       </Modal>
     </div>
   );
@@ -103,3 +102,5 @@ Field.Wrapper = Wrapper;
 Field.Left = Left;
 Field.Center = Center;
 Field.Right = Right;
+
+export default Field;

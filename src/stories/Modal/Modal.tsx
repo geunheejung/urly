@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import Default from '../../components/Modal/Default';
-import {Button} from "../Button/Button";
+import { Button } from '../Button/Button';
 import './modal.scss';
 
 interface ModalProps extends ReactModal.Props {
@@ -9,28 +9,18 @@ interface ModalProps extends ReactModal.Props {
   className?: string;
   isOpen: boolean;
   onConfirm: () => void;
-  children: React.ReactNode,
+  children: React.ReactNode;
 }
 
-export const Modal = ({
-  primary = true,
-  className, 
-  isOpen,
-  onConfirm,
-  children,
-  ...props
-}: ModalProps) => {  
-  const toggleModal = () => {  
+export const Modal = ({ primary = true, className, isOpen, onConfirm, children, ...props }: ModalProps) => {
+  const toggleModal = () => {
     onConfirm();
-  }
+  };
 
-  const modalClassName = classNames(
-    'inner', 
-    { 
-      [`${className}`]: !!className,
-      secondary: !primary
-    }
-  );
+  const modalClassName = classNames('inner', {
+    [`${className}`]: !!className,
+    secondary: !primary,
+  });
 
   return (
     <Default
@@ -38,17 +28,12 @@ export const Modal = ({
       overlayClassName="storybook-form-modal_overlay"
       className={modalClassName}
       onRequestClose={onConfirm}
+      {...props}
     >
-      <div className="content">
-        {children}
-      </div>
+      <div className="content">{children}</div>
       <div className="confirm">
-        <Button
-          label="확인"
-          size="large"
-          onClick={toggleModal}
-        />
+        <Button label="확인" size="large" onClick={toggleModal} />
       </div>
     </Default>
-  )
-}
+  );
+};

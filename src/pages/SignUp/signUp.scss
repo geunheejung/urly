@@ -27,6 +27,20 @@
       line-height: 17px;
       text-align: right;
     }
+
+    .submit {
+      display: flex;
+      -webkit-box-pack: center;
+      justify-content: center;
+      border-top: 1px solid rgb(247, 247, 247);
+      padding: 40px 0px;
+
+      button {
+        padding: 0px 10px;
+        width: 240px;
+        height: 56px;
+      }
+    }
   }
 
   .address-field {
@@ -38,6 +52,7 @@
   }
 
   .all-agree-field {
+    padding: 10px 0px 10px 20px;
     .field {
       padding: 8px 0;
 

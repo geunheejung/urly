@@ -1,5 +1,4 @@
-import { debug } from 'console';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import _throttle from 'lodash/throttle';
 import { signupValidate } from '../../helper';
 import { formatter } from '@/hooks/useTimer';
@@ -14,9 +13,6 @@ export const enum InputType {
   Phone = 'PHONE',
 }
 
-// isTimer -> ms 를 받고, ms를 토대로 Timer를 실행한다.
-// Timer를 실행하는데, 이때 Timer가 끝날 시에대한 처리를 받는다?
-// Timer를 표현만 하고 Timer에 대한 관리는 상위에서.
 export interface InputProps {
   maxLength?: number;
   placeholder?: string;
@@ -32,7 +28,7 @@ export interface InputProps {
   onChange?: (value: string) => void;
 }
 
-export const Input = ({
+const Input = ({
   maxLength = 17,
   type = 'text',
   primary = false,
@@ -50,19 +46,24 @@ export const Input = ({
   const [warning, setWarning] = useState('');
   const mode = primary ? 'storybook-input--primary' : 'storybook-input--secondary';
 
-  const handleValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {
-      target: { value },
-    } = e;
-    if (ignore && ignore.test(value)) return;
+  const handleValue = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const {
+        target: { value },
+      } = e;
+      if (ignore && ignore.test(value)) return;
 
-    setValue(value);
-    setWarning(signupValidate(value, inputType));
+      console.log(1);
 
-    if (onChange) {
-      onChange(value);
-    }
-  };
+      setValue(value);
+      setWarning(signupValidate(value, inputType));
+
+      if (onChange) {
+        onChange(value);
+      }
+    },
+    [ignore, value, inputType, onChange],
+  );
 
   const _handleChange = _throttle(handleValue, 300);
 
@@ -76,6 +77,7 @@ export const Input = ({
     <div className={['storybook-input', mode].join(' ')}>
       <div className="field">
         <input
+          id={`member${inputType}`}
           type={type}
           value={value}
           readOnly={readOnly}
@@ -90,3 +92,5 @@ export const Input = ({
     </div>
   );
 };
+
+export default Input;

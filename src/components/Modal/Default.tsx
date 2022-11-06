@@ -9,7 +9,7 @@ export enum ThemeKey {
 }
 
 export interface DefaultModalProps extends ReactModal.Props {
-  themeKey?: ThemeKey
+  themeKey?: ThemeKey;
 }
 
 const Default = ({
@@ -19,29 +19,27 @@ const Default = ({
   themeKey = ThemeKey.Default,
   overlayClassName,
   onRequestClose,
-  children
+  children,
+  ...props
 }: DefaultModalProps) => {
   const theme = {
     [ThemeKey.Default]: 'default',
-    [ThemeKey.Popup]: 'popup'
+    [ThemeKey.Popup]: 'popup',
   };
 
   return (
     <ReactModal
-      isOpen={isOpen} 
+      isOpen={isOpen}
       style={style}
       ariaHideApp={false}
-      className={classNames(
-        `storybook-modal`, 
-        `--${theme[themeKey]}`,
-        { [`${className}`]: !!className }
-      )}
+      className={classNames(`storybook-modal`, `--${theme[themeKey]}`, { [`${className}`]: !!className })}
       overlayClassName={overlayClassName}
       onRequestClose={onRequestClose}
+      {...props}
     >
       {children}
     </ReactModal>
-  )
-}
+  );
+};
 
 export default Default;

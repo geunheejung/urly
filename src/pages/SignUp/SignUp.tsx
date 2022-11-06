@@ -13,10 +13,9 @@ import { IAddress } from '../ShippingAddress/Result';
 import { CheckList } from '@/stories/Check/List/CheckList';
 import { man, none, woman } from '@/stories/Check/Check.stories';
 import BirthInput from '@/components/BirthInput';
-import Check from '@/stories/Check';
 import './signUp.scss';
-import { ToggleType } from '@/stories/Check/Check';
 import Terms from '@/containers/Terms';
+import Modal from '@/stories/Modal';
 
 enum CheckValue {
   Recommend = 'RECOMMEND',
@@ -33,16 +32,23 @@ const Signup = () => {
   const [address] = useLocalStorageState<IAddress>('address');
   const [additionalValue, setAdditionalValue] = useState('');
   const [joinExtra, setJoinExtra, updateJoinExtra] = useInput('');
+  const [notValidated, setNotValidated] = useState<{ id: InputType; message: string }>();
 
-  const confirmAgain = (inputType: InputType) => (value: string) => {
-    const message = signupValidate(value, inputType);
+  const confirmAgain = useCallback(
+    (inputType: InputType, value: string) => {
+      const message = signupValidate(value, inputType);
 
-    if (message) return message;
+      if (message) return message;
 
-    const isValidated = inputType === InputType.Id ? confirmId(value) : confirmEmail(value);
+      const isId = inputType === InputType.Id;
+      const isValidated = isId ? confirmId(value) : confirmEmail(value);
 
-    return isValidated ? '사용 불가능 합니다.' : '사용 가능 합니다.';
-  };
+      // setNotValidated({ id: inputType, message: `${isId ? '아이디' : '이메일'} 중복 체크를 해주세요.` });
+
+      return isValidated ? '사용 불가능 합니다.' : '사용 가능 합니다.';
+    },
+    [notValidated, id, email],
+  );
 
   const getConfirmPwMsg = useCallback(() => {
     const message = '';
@@ -54,7 +60,7 @@ const Signup = () => {
 
   const handleSearchAddress = useCallback(() => {
     openInNewTab(ROUTE.SHIPPING);
-  }, [isOpen]);
+  }, []);
 
   const clickAdditional = useCallback(
     ({ currentTarget: { value } }: React.MouseEvent<HTMLInputElement>) => {
@@ -63,6 +69,37 @@ const Signup = () => {
     },
     [additionalValue],
   );
+
+  const handleSubmit = useCallback(() => {
+    let data;
+
+    if (!confirmId(id)) data = { id: InputType.Id, message: '아이디 중복체크 해주세요.' };
+
+    toggle();
+    setNotValidated(data);
+  }, [id, pw, confirmPw, name, email, isOpen, address, additionalValue]);
+
+  const handleConfirm = useCallback(() => {
+    toggle();
+  }, [notValidated, isOpen]);
+
+  const handleAfterClose = () => {
+    if (!notValidated) return;
+
+    const key = `member${notValidated.id}`;
+
+    const input = document.getElementById(key);
+
+    if (!input) return;
+
+    input.focus();
+  };
+
+  const toggle = () => setIsOpen((prev) => !prev);
+
+  // useEffect(() => {
+
+  // }, [notValidated, isOpen]);
 
   return (
     <div className="signup">
@@ -82,7 +119,7 @@ const Signup = () => {
           }}
           onChange={handleId}
           button="중복확인"
-          modalContent={confirmAgain(InputType.Id)}
+          modalMessage={confirmAgain(InputType.Id, id)}
         />
         <Field
           label="비밀번호"
@@ -125,7 +162,7 @@ const Signup = () => {
           }}
           onChange={handleEmail}
           button="중복확인"
-          modalContent={confirmAgain(InputType.Email)}
+          modalMessage={confirmAgain(InputType.Email, email)}
         />
         <VerifyPhone />
 
@@ -223,7 +260,15 @@ const Signup = () => {
             <Terms />
           </Field.Center>
         </Field.Wrapper>
+        <div className="submit">
+          <Button primary size="large" onClick={handleSubmit}>
+            가입하기
+          </Button>
+        </div>
       </div>
+      <Modal isOpen={isOpen} onConfirm={handleConfirm} onAfterClose={handleAfterClose}>
+        {notValidated && notValidated.message}
+      </Modal>
     </div>
   );
 };

@@ -122,7 +122,7 @@ const VerifyPhone = () => {
         onChange={handlePhone}
         onClick={_handleVerifyCode}
         onConfirm={handlePhoneConfirm}
-        modalContent={getApiErrorMsg}
+        modalMessage={getApiErrorMsg()}
         getLoadingStatus={getLoadingBy}
       />
       {verifyCodeResponse?.status === 200 && (
@@ -140,7 +140,7 @@ const VerifyPhone = () => {
           onChange={handleCode}
           onClick={_handleConfirmCode}
           onConfirm={handleVerifyCodeConfirm}
-          modalContent={getApiErrorMsg}
+          modalMessage={getApiErrorMsg()}
           getLoadingStatus={getLoadingBy}
         />
       )}
