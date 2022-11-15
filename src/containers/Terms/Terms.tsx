@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import _isBoolean from 'lodash/isBoolean';
 import Check from '@/stories/Check';
 
@@ -13,6 +13,9 @@ enum TermsType {
   RequiredSignupAge = 'RequiredSignupAge',
 }
 
+interface ITermsProps {
+  setRequiredChecked: (isRequiredChecked: boolean) => void;
+}
 interface ITerms {
   id: TermsType;
   isParent?: boolean;
@@ -26,7 +29,7 @@ interface ITerms {
   isChecked: boolean;
 }
 
-const Terms = () => {
+const Terms = ({ setRequiredChecked }: ITermsProps) => {
   const data: ITerms[] = [
     {
       id: TermsType.RequiredTermsCondition,
@@ -81,6 +84,8 @@ const Terms = () => {
 
   const [termsList, setTermsList] = useState<ITerms[]>(data);
   const [isAllChecked, setIsAllChecked] = useState(false);
+  const requiredList = termsList.filter(({ isRequired }) => isRequired);
+
   const getIsChecked = (terms: ITerms) => terms.isChecked;
 
   const handleClick = useCallback(
@@ -132,6 +137,13 @@ const Terms = () => {
 
     setIsAllChecked((prev) => !prev);
     setTermsList(newTermsList);
+  }, [termsList, isAllChecked]);
+
+  useEffect(() => {
+    const isRequiredChecked = requiredList.every((terms) => terms.isChecked);
+    if (isRequiredChecked) {
+      setRequiredChecked(isRequiredChecked);
+    }
   }, [termsList, isAllChecked]);
 
   return (

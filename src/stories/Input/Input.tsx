@@ -11,6 +11,8 @@ export const enum InputType {
   Name = 'NAME',
   Email = 'EMAIL',
   Phone = 'PHONE',
+  Terms = 'TERMS',
+  Address = 'ADDRESS',
 }
 
 export interface InputProps {

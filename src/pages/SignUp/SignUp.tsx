@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 import Button from '@/stories/Button';
 import Field from '@/stories/Field';
@@ -22,17 +22,34 @@ enum CheckValue {
   Event = 'EVENT',
 }
 
+interface ValidatedData {
+  id: InputType;
+  data: any;
+  message: string;
+}
+
 const Signup = () => {
   const [id, , handleId] = useInput('');
+  const [isDoubleChecked, setIsDoubleChecked] = useState(false);
   const [pw, , handlePw] = useInput('');
   const [confirmPw, , handleConfirmPw] = useInput('');
   const [name, , handleName] = useInput('');
   const [email, , handleEmail] = useInput('');
   const [isOpen, setIsOpen] = useState(false);
+  const [verifyCode, , handleVerifyCode] = useInput('');
   const [address] = useLocalStorageState<IAddress>('address');
   const [additionalValue, setAdditionalValue] = useState('');
   const [joinExtra, setJoinExtra, updateJoinExtra] = useInput('');
+  const [isRequiredTermsChecked, setIsRequiredTermsChecked] = useState(false);
   const [notValidated, setNotValidated] = useState<{ id: InputType; message: string }>();
+  const validatedList: ValidatedData[] = [
+    { id: InputType.Id, data: id, message: '아이디 중복체크 해주세요.' },
+    { id: InputType.Email, data: email, message: '이메일 중복체크 해주세요.' },
+    { id: InputType.Phone, data: verifyCode, message: '휴대폰 인증 해주세요.' },
+    { id: InputType.Terms, data: isRequiredTermsChecked, message: '필수인증약관 동의 해주세요.' },
+    { id: InputType.Name, data: name, message: '이름 입력 해주세요.' },
+    { id: InputType.Address, data: address, message: '주소 입력 해주세요.' },
+  ];
 
   const confirmAgain = useCallback(
     (inputType: InputType, value: string) => {
@@ -42,8 +59,6 @@ const Signup = () => {
 
       const isId = inputType === InputType.Id;
       const isValidated = isId ? confirmId(value) : confirmEmail(value);
-
-      // setNotValidated({ id: inputType, message: `${isId ? '아이디' : '이메일'} 중복 체크를 해주세요.` });
 
       return isValidated ? '사용 불가능 합니다.' : '사용 가능 합니다.';
     },
@@ -71,13 +86,44 @@ const Signup = () => {
   );
 
   const handleSubmit = useCallback(() => {
-    let data;
+    let notValidatedData;
 
-    if (!confirmId(id)) data = { id: InputType.Id, message: '아이디 중복체크 해주세요.' };
+    for (const raw of validatedList) {
+      const { id, data, message } = raw;
+
+      switch (id) {
+        case InputType.Id:
+        case InputType.Email:
+          debugger;
+          if (isDoubleChecked) return;
+          notValidatedData = raw;
+          break;
+        case InputType.Phone:
+          break;
+        case InputType.Terms:
+          break;
+        case InputType.Name:
+          break;
+        case InputType.Address:
+          break;
+        default:
+          break;
+      }
+    }
 
     toggle();
-    setNotValidated(data);
-  }, [id, pw, confirmPw, name, email, isOpen, address, additionalValue]);
+    setNotValidated(notValidatedData);
+  }, [id, isDoubleChecked, email, verifyCode, isRequiredTermsChecked, name, address]);
+
+  const handleDoubleCheck = (id: InputType) =>
+    useCallback(
+      (value: string, toggle: () => void) => {
+        const isValidated = !signupValidate(value, id);
+        setIsDoubleChecked(isValidated);
+        toggle();
+      },
+      [isDoubleChecked, id, email],
+    );
 
   const handleConfirm = useCallback(() => {
     toggle();
@@ -95,11 +141,14 @@ const Signup = () => {
     input.focus();
   };
 
+  const setRequiredChecked = useCallback(
+    (isRequiredChecked: boolean) => {
+      setIsRequiredTermsChecked(isRequiredChecked);
+    },
+    [isRequiredTermsChecked],
+  );
+
   const toggle = () => setIsOpen((prev) => !prev);
-
-  // useEffect(() => {
-
-  // }, [notValidated, isOpen]);
 
   return (
     <div className="signup">
@@ -119,6 +168,7 @@ const Signup = () => {
           }}
           onChange={handleId}
           button="중복확인"
+          onClick={handleDoubleCheck(InputType.Id)}
           modalMessage={confirmAgain(InputType.Id, id)}
         />
         <Field
@@ -162,9 +212,10 @@ const Signup = () => {
           }}
           onChange={handleEmail}
           button="중복확인"
+          onClick={handleDoubleCheck(InputType.Email)}
           modalMessage={confirmAgain(InputType.Email, email)}
         />
-        <VerifyPhone />
+        <VerifyPhone onChange={handleVerifyCode} />
 
         <Field.Wrapper className="address-field">
           <Field.Left label="주소" isRequired />
@@ -257,7 +308,7 @@ const Signup = () => {
         <Field.Wrapper className="all-agree-field">
           <Field.Left label="이용약관동의" isRequired />
           <Field.Center>
-            <Terms />
+            <Terms setRequiredChecked={setRequiredChecked} />
           </Field.Center>
         </Field.Wrapper>
         <div className="submit">

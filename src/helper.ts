@@ -1,5 +1,6 @@
 import { RULE } from '@/common';
 import { InputType } from '@/stories/Input/Input';
+import { confirmEmail, confirmId } from './api';
 
 export const openInNewTab = (url: string) => {
   const W = 540,
@@ -23,12 +24,13 @@ export const signupValidate = (value: string, inputType?: InputType) => {
   const validateEmail = () => {
     if (!value) return (message = '이메일을 입력해주세요.');
     if (!value.match(RULE.EMAIL)) message = '이메일 형식으로 입력해주세요.';
+    if (confirmEmail(value)) message = '이미 존재하는 이메일 입니다.';
   };
 
   switch (inputType) {
     case InputType.Id:
-      // 6자 이상 16자 이하의 영문 혹은 영문과 숫자를 조합
-      if (!value.match(RULE.ID)) message = '6자 이상 16자 이하의 영문 혹은 영문과 숫자를 조합';
+      if (!value.match(RULE.ID)) return '6자 이상 16자 이하의 영문 혹은 영문과 숫자를 조합';
+      if (confirmId(value)) message = '이미 존재하는 아이디 입니다.';
       break;
     case InputType.Pw:
       validatePW();

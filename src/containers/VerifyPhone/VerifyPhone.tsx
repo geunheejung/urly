@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, forwardRef } from 'react';
 import _throttle from 'lodash/throttle';
 import { ApiError, API_STATUS, IResponse, validatePhoneCode, verifyCode } from '@/api';
 import { RULE } from '@/common';
@@ -8,10 +8,14 @@ import Field from '@/stories/Field';
 import { InputType } from '@/stories/Input/Input';
 import Modal from '@/stories/Modal';
 
-const VerifyPhone = () => {
+interface IVerifyPhoneProps {
+  onChange: (value: string) => void;
+}
+
+const VerifyPhone = ({ onChange }: IVerifyPhoneProps) => {
   const DEFAULT_MS = 180000;
   const [phone, setPhone, handlePhone] = useInput('');
-  const [code, , handleCode] = useInput('');
+  const [code, setCode] = useState('');
   const [verifyCodeResponse, setVerifyCodeResponse] = useState<IResponse>();
   const [validatePhoneCodeRes, setValidatePhoneCodeRes] = useState<IResponse>();
   const [apiError, setApiError] = useState<ApiError>();
@@ -54,6 +58,14 @@ const VerifyPhone = () => {
       }
     },
     [code, apiStatus, verifyCodeResponse, apiError, ms],
+  );
+
+  const handleCode = useCallback(
+    (value: string) => {
+      setCode(value);
+      onChange(value);
+    },
+    [code],
   );
 
   const handlePhoneConfirm = useCallback(() => {
