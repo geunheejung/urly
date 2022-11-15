@@ -47,10 +47,16 @@ const Signup = () => {
   const [isConfirmationCode, setIsConfirmationCode] = useState(false); // 인증번호 확인 완료 시 true / 재인증 시 초기화
   const [notValidated, setNotValidated] = useState<{ id: InputType; message: string }>();
   const validatedList: ValidatedData[] = [
+    {
+      id: InputType.Terms,
+      data: isRequiredTermsChecked,
+      message: '필수인증약관 동의 해주세요.',
+      condition: isRequiredTermsChecked,
+    },
     { id: InputType.Id, data: id, message: '아이디 중복체크 해주세요.', condition: isIdChecked },
     { id: InputType.Email, data: email, message: '이메일 중복체크 해주세요.', condition: isEmailChecked },
     { id: InputType.Phone, data: verifyCode, message: '휴대폰 인증 해주세요.', condition: isConfirmationCode },
-    { id: InputType.Terms, data: isRequiredTermsChecked, message: '필수인증약관 동의 해주세요.' },
+
     { id: InputType.Name, data: name, message: '이름 입력 해주세요.' },
     { id: InputType.Address, data: address, message: '주소 입력 해주세요.' },
   ];

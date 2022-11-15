@@ -141,9 +141,7 @@ const Terms = ({ setRequiredChecked }: ITermsProps) => {
 
   useEffect(() => {
     const isRequiredChecked = requiredList.every((terms) => terms.isChecked);
-    if (isRequiredChecked) {
-      setRequiredChecked(isRequiredChecked);
-    }
+    setRequiredChecked(isRequiredChecked);
   }, [termsList, isAllChecked]);
 
   return (
