@@ -10,9 +10,10 @@ import Modal from '@/stories/Modal';
 
 interface IVerifyPhoneProps {
   onChange: (value: string) => void;
+  setIsConfirmationCode: (isConfirmationCode: boolean) => void;
 }
 
-const VerifyPhone = ({ onChange }: IVerifyPhoneProps) => {
+const VerifyPhone = ({ onChange, setIsConfirmationCode }: IVerifyPhoneProps) => {
   const DEFAULT_MS = 180000;
   const [phone, setPhone, handlePhone] = useInput('');
   const [code, setCode] = useState('');
@@ -50,8 +51,11 @@ const VerifyPhone = ({ onChange }: IVerifyPhoneProps) => {
         await setValidatePhoneCodeRes(res);
         await setApiStatus(API_STATUS.SUCCESS);
         await toggleModal();
+        // 성공 시, 인증번호 확인 완료 상태값 전달
+        setIsConfirmationCode(true);
       } catch (err) {
         await setApiStatus(API_STATUS.FAILURE);
+        setIsConfirmationCode(false);
         if (err instanceof ApiError) setApiError(err);
       } finally {
         openModal();
@@ -79,6 +83,7 @@ const VerifyPhone = ({ onChange }: IVerifyPhoneProps) => {
   }, [apiStatus]);
 
   const handleReVerifyCode = useCallback(() => {
+    setIsConfirmationCode(false);
     setPhone('');
     clearVerifyCode();
     clearValidatePhoneCode();

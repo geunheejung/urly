@@ -55,8 +55,6 @@ const Input = ({
       } = e;
       if (ignore && ignore.test(value)) return;
 
-      console.log(1);
-
       setValue(value);
       setWarning(signupValidate(value, inputType));
 

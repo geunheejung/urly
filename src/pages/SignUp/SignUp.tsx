@@ -29,27 +29,45 @@ interface ValidatedData {
 }
 
 const Signup = () => {
-  const [id, , handleId] = useInput('');
-  const [isDoubleChecked, setIsDoubleChecked] = useState(false);
+  const [id, setId] = useState('');
+  const [isIdChecked, setIsIdChecked] = useState(false);
+  const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [pw, , handlePw] = useInput('');
   const [confirmPw, , handleConfirmPw] = useInput('');
   const [name, , handleName] = useInput('');
-  const [email, , handleEmail] = useInput('');
+  const [email, setEmail] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [verifyCode, , handleVerifyCode] = useInput('');
   const [address] = useLocalStorageState<IAddress>('address');
   const [additionalValue, setAdditionalValue] = useState('');
   const [joinExtra, setJoinExtra, updateJoinExtra] = useInput('');
   const [isRequiredTermsChecked, setIsRequiredTermsChecked] = useState(false);
+  const [isConfirmationCode, setIsConfirmationCode] = useState(false); // 인증번호 확인 완료 시 true / 재인증 시 초기화
   const [notValidated, setNotValidated] = useState<{ id: InputType; message: string }>();
   const validatedList: ValidatedData[] = [
-    { id: InputType.Id, data: id, message: '아이디 중복체크 해주세요.' },
-    { id: InputType.Email, data: email, message: '이메일 중복체크 해주세요.' },
-    { id: InputType.Phone, data: verifyCode, message: '휴대폰 인증 해주세요.' },
-    { id: InputType.Terms, data: isRequiredTermsChecked, message: '필수인증약관 동의 해주세요.' },
-    { id: InputType.Name, data: name, message: '이름 입력 해주세요.' },
     { id: InputType.Address, data: address, message: '주소 입력 해주세요.' },
+    { id: InputType.Name, data: name, message: '이름 입력 해주세요.' },
+    { id: InputType.Terms, data: isRequiredTermsChecked, message: '필수인증약관 동의 해주세요.' },
+    { id: InputType.Phone, data: verifyCode, message: '휴대폰 인증 해주세요.' },
+    { id: InputType.Email, data: email, message: '이메일 중복체크 해주세요.' },
+    { id: InputType.Id, data: id, message: '아이디 중복체크 해주세요.' },
   ];
+
+  const handleId = useCallback(
+    (value: string) => {
+      setId(value);
+      setIsIdChecked(false);
+    },
+    [id],
+  );
+
+  const handleEmail = useCallback(
+    (value: string) => {
+      setEmail(value);
+      setIsEmailChecked(false);
+    },
+    [email],
+  );
 
   const confirmAgain = useCallback(
     (inputType: InputType, value: string) => {
@@ -86,19 +104,18 @@ const Signup = () => {
   );
 
   const handleSubmit = useCallback(() => {
-    let notValidatedData;
-
+    let notValidated;
     for (const raw of validatedList) {
       const { id, data, message } = raw;
-
       switch (id) {
         case InputType.Id:
+          if (!isIdChecked) notValidated = raw;
+          break;
         case InputType.Email:
-          debugger;
-          if (isDoubleChecked) return;
-          notValidatedData = raw;
+          if (!isEmailChecked) notValidated = raw;
           break;
         case InputType.Phone:
+          if (!isConfirmationCode) notValidated = raw;
           break;
         case InputType.Terms:
           break;
@@ -111,18 +128,20 @@ const Signup = () => {
       }
     }
 
-    toggle();
-    setNotValidated(notValidatedData);
-  }, [id, isDoubleChecked, email, verifyCode, isRequiredTermsChecked, name, address]);
+    if (notValidated) toggle();
+
+    setNotValidated(notValidated);
+  }, [id, isIdChecked, isEmailChecked, isConfirmationCode, email, verifyCode, isRequiredTermsChecked, name, address]);
 
   const handleDoubleCheck = (id: InputType) =>
     useCallback(
       (value: string, toggle: () => void) => {
         const isValidated = !signupValidate(value, id);
-        setIsDoubleChecked(isValidated);
+        if (id === InputType.Id) setIsIdChecked(isValidated);
+        else setIsEmailChecked(isValidated);
         toggle();
       },
-      [isDoubleChecked, id, email],
+      [isIdChecked, isEmailChecked, id, email],
     );
 
   const handleConfirm = useCallback(() => {
@@ -148,7 +167,16 @@ const Signup = () => {
     [isRequiredTermsChecked],
   );
 
+  const changeIsConfirmationCode = useCallback(
+    (isConfirmationCode: boolean) => {
+      setIsConfirmationCode(isConfirmationCode);
+    },
+    [isConfirmationCode],
+  );
+
   const toggle = () => setIsOpen((prev) => !prev);
+
+  console.log(isConfirmationCode);
 
   return (
     <div className="signup">
@@ -215,7 +243,11 @@ const Signup = () => {
           onClick={handleDoubleCheck(InputType.Email)}
           modalMessage={confirmAgain(InputType.Email, email)}
         />
-        <VerifyPhone onChange={handleVerifyCode} />
+        <VerifyPhone
+          onChange={handleVerifyCode}
+          setIsConfirmationCode={changeIsConfirmationCode}
+          //
+        />
 
         <Field.Wrapper className="address-field">
           <Field.Left label="주소" isRequired />
