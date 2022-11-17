@@ -8,8 +8,20 @@
   bottom: 0;
   left: 0;
   overflow-x: hidden;
-  transition: background-color .1s;
-  background: rgba(0,0,0,.4);
+  background: rgba(0, 0, 0, 0.4);
+
+  &.ReactModal__Overlay {
+    opacity: 0;
+    transition: opacity 100ms ease;
+  }
+
+  &.ReactModal__Overlay--after-open {
+    opacity: 1;
+  }
+
+  &.ReactModal__Overlay--before-close {
+    opacity: 0;
+  }
 
   & .inner {
     width: 360px;
@@ -32,7 +44,6 @@
         border: none;
         height: 100%;
       }
-
     }
   }
 }

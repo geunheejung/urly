@@ -29,6 +29,7 @@ const Default = ({
 
   return (
     <ReactModal
+      closeTimeoutMS={100}
       isOpen={isOpen}
       style={style}
       ariaHideApp={false}

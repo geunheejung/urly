@@ -1,6 +1,7 @@
 .storybook-modal {
-  &.--default {}
-  &.--popup {  
+  &.--default {
+  }
+  &.--popup {
     position: absolute;
     left: 0;
     top: 0;
