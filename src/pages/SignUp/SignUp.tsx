@@ -47,16 +47,22 @@ const Signup = () => {
   const [isConfirmationCode, setIsConfirmationCode] = useState(false); // 인증번호 확인 완료 시 true / 재인증 시 초기화
   const [notValidated, setNotValidated] = useState<{ id: InputType; message: string }>();
   const validatedList: ValidatedData[] = [
+    { id: InputType.Id, data: id, message: '아이디 중복체크 해주세요.', condition: isIdChecked },
+    { id: InputType.Email, data: email, message: '이메일 중복체크 해주세요.', condition: isEmailChecked },
+    { id: InputType.Phone, data: verifyCode, message: '휴대폰 인증 해주세요.', condition: isConfirmationCode },
+    { id: InputType.Pw, data: pw, message: '비밀번호를 입력해주세요', condition: !signupValidate(pw, InputType.Pw) }, // (1)비밀번호를 입력해주세요 (2) 비밀번호를 한번 더 입력해주세요
+    {
+      id: InputType.DoublePw,
+      data: pw,
+      message: '비밀번호를 한번 더 입력해주세요',
+      condition: !signupValidate(confirmPw, InputType.DoublePw),
+    },
     {
       id: InputType.Terms,
       data: isRequiredTermsChecked,
       message: '필수인증약관 동의 해주세요.',
       condition: isRequiredTermsChecked,
     },
-    { id: InputType.Id, data: id, message: '아이디 중복체크 해주세요.', condition: isIdChecked },
-    { id: InputType.Email, data: email, message: '이메일 중복체크 해주세요.', condition: isEmailChecked },
-    { id: InputType.Phone, data: verifyCode, message: '휴대폰 인증 해주세요.', condition: isConfirmationCode },
-
     { id: InputType.Name, data: name, message: '이름 입력 해주세요.' },
     { id: InputType.Address, data: address, message: '주소 입력 해주세요.' },
   ];
@@ -112,12 +118,27 @@ const Signup = () => {
   );
 
   const handleSubmit = useCallback(() => {
-    const notValidated = validatedList.find((raw) => _isBoolean(raw.condition) && !raw.condition);
+    const notValidated = validatedList.find((raw) => {
+      debugger;
+      return _isBoolean(raw.condition) && !raw.condition;
+    });
 
     if (notValidated) toggle();
 
     setNotValidated(notValidated);
-  }, [id, isIdChecked, isEmailChecked, isConfirmationCode, email, verifyCode, isRequiredTermsChecked, name, address]);
+  }, [
+    id,
+    isIdChecked,
+    isEmailChecked,
+    isConfirmationCode,
+    email,
+    verifyCode,
+    pw,
+    confirmPw,
+    isRequiredTermsChecked,
+    name,
+    address,
+  ]);
 
   const handleDoubleCheck = (id: InputType) =>
     useCallback(
