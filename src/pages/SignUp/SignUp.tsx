@@ -1,22 +1,23 @@
 import React, { useCallback, useState } from 'react';
 import _isBoolean from 'lodash/isBoolean';
 import useLocalStorageState from 'use-local-storage-state';
+import useInput from '@/hooks/useInput';
 import Button from '@/stories/Button';
 import Field from '@/stories/Field';
 import VerifyPhone from '@/containers/VerifyPhone';
-import { InputType } from '@/stories/Input/Input';
-import Input from '@/stories/Input';
-import useInput from '@/hooks/useInput';
-import { confirmEmail, confirmId } from '@/api';
-import { ROUTE, RULE } from '@/common';
-import { openInNewTab, signupValidate } from '@/helper';
-import { IAddress } from '../ShippingAddress/Result';
-import { CheckList } from '@/stories/Check/List/CheckList';
-import { man, none, woman } from '@/stories/Check/Check.stories';
 import BirthInput from '@/components/BirthInput';
-import './signUp.scss';
 import Terms from '@/containers/Terms';
 import Modal from '@/stories/Modal';
+import Input from '@/stories/Input';
+import { CheckList } from '@/stories/Check/List/CheckList';
+import { IAddress } from '../ShippingAddress/Result';
+import { InputType } from '@/stories/Input/Input';
+import { ROUTE, RULE } from '@/common';
+import { confirmEmail, confirmId } from '@/api';
+import { openInNewTab, signupValidate } from '@/helper';
+import { man, none, woman } from '@/stories/Check/Check.stories';
+
+import './signUp.scss';
 
 enum CheckValue {
   Recommend = 'RECOMMEND',
@@ -189,8 +190,6 @@ const Signup = () => {
 
   const toggle = () => setIsOpen((prev) => !prev);
 
-  console.log(isConfirmationCode);
-
   return (
     <div className="signup">
       <div className="title">회원가입</div>
@@ -209,6 +208,7 @@ const Signup = () => {
           }}
           onChange={handleId}
           button="중복확인"
+          disabled={isIdChecked}
           onClick={handleDoubleCheck(InputType.Id)}
           modalMessage={confirmAgain(InputType.Id, id)}
         />
@@ -253,6 +253,7 @@ const Signup = () => {
           }}
           onChange={handleEmail}
           button="중복확인"
+          disabled={isEmailChecked}
           onClick={handleDoubleCheck(InputType.Email)}
           modalMessage={confirmAgain(InputType.Email, email)}
         />

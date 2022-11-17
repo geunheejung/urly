@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import classNames from 'classnames';
 import { Label, LabelProps } from '../Label/Label';
 import { Button, ButtonProps } from '../Button/Button';
@@ -30,6 +30,7 @@ const Field = ({
   label = '',
   className,
   isRequired = false,
+  disabled,
   button,
   modalMessage,
   onChange,
@@ -72,7 +73,7 @@ const Field = ({
         <Input onChange={handleChange} {...inputProps} />
         {description && <div className="description">{description}</div>}
       </Center>
-      <Right>{button && <Button label={button} onClick={handleClick} {..._buttonProps} />}</Right>
+      <Right>{button && <Button disabled={disabled} label={button} onClick={handleClick} {..._buttonProps} />}</Right>
 
       <Modal isOpen={isOpen} onConfirm={toggleModal}>
         {modalMessage}
