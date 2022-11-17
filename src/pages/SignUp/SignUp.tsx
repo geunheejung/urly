@@ -12,12 +12,13 @@ import Input from '@/stories/Input';
 import { CheckList } from '@/stories/Check/List/CheckList';
 import { IAddress } from '../ShippingAddress/Result';
 import { InputType } from '@/stories/Input/Input';
-import { ROUTE, RULE } from '@/common';
+import { GENDER, ROUTE, RULE } from '@/common';
 import { confirmEmail, confirmId } from '@/api';
 import { openInNewTab, signupValidate } from '@/helper';
 import { man, none, woman } from '@/stories/Check/Check.stories';
 
 import './signUp.scss';
+import { ITerms } from '@/containers/Terms/Terms';
 
 enum CheckValue {
   Recommend = 'RECOMMEND',
@@ -26,9 +27,22 @@ enum CheckValue {
 
 interface ValidatedData {
   id: InputType;
-  data: any;
   message: string;
   condition?: boolean;
+}
+
+interface IFormData {
+  id: string;
+  pw: string;
+  name: string;
+  phone: string;
+  address: string;
+  detailAddress?: string;
+  gender: string;
+  birth?: string;
+  additionalType?: string;
+  additionalValue?: string;
+  terms: string[];
 }
 
 const Signup = () => {
@@ -40,35 +54,35 @@ const Signup = () => {
   const [name, , handleName] = useInput('');
   const [email, setEmail] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const [verifyCode, , handleVerifyCode] = useInput('');
+  const [phone, , handlePhone] = useInput('');
   const [address] = useLocalStorageState<IAddress>('address');
-  const [additionalValue, setAdditionalValue] = useState('');
+  const [gender, setGender] = useState(GENDER.MALE);
+  const [additionalType, setAdditionalType] = useState('');
+  const [birth, setBirth] = useState('');
   const [joinExtra, setJoinExtra, updateJoinExtra] = useInput('');
+  const [checkedTermsList, setCheckedTermsList] = useState<ITerms[]>();
   const [isRequiredTermsChecked, setIsRequiredTermsChecked] = useState(false);
   const [isConfirmationCode, setIsConfirmationCode] = useState(false); // 인증번호 확인 완료 시 true / 재인증 시 초기화
   const [notValidated, setNotValidated] = useState<{ id: InputType; message: string }>();
 
   const validatedList: ValidatedData[] = [
-    { id: InputType.Id, data: id, message: '아이디 중복체크 해주세요.', condition: isIdChecked },
-    { id: InputType.Email, data: email, message: '이메일 중복체크 해주세요.', condition: isEmailChecked },
-    { id: InputType.Phone, data: verifyCode, message: '휴대폰 인증 해주세요.', condition: isConfirmationCode },
-    { id: InputType.Pw, data: pw, message: '비밀번호를 입력해주세요', condition: !signupValidate(pw, InputType.Pw) }, // (1)비밀번호를 입력해주세요 (2) 비밀번호를 한번 더 입력해주세요
+    { id: InputType.Id, message: '아이디 중복체크 해주세요.', condition: isIdChecked },
+    { id: InputType.Email, message: '이메일 중복체크 해주세요.', condition: isEmailChecked },
+    { id: InputType.Phone, message: '휴대폰 인증 해주세요.', condition: isConfirmationCode },
+    { id: InputType.Pw, message: '비밀번호를 입력해주세요', condition: !signupValidate(pw, InputType.Pw) }, // (1)비밀번호를 입력해주세요 (2) 비밀번호를 한번 더 입력해주세요
     {
       id: InputType.DoublePw,
-      data: pw,
       message: '비밀번호를 한번 더 입력해주세요',
       condition: !signupValidate(confirmPw, InputType.DoublePw),
     },
     {
       id: InputType.Terms,
-      data: isRequiredTermsChecked,
       message: '필수인증약관 동의 해주세요.',
       condition: isRequiredTermsChecked,
     },
-    { id: InputType.Name, data: name, message: '이름 입력 해주세요.', condition: !!name },
+    { id: InputType.Name, message: '이름 입력 해주세요.', condition: !!name },
     {
       id: InputType.Address,
-      data: address,
       message: '주소 입력 해주세요.',
       condition: !!(address && address.mainAddress),
     },
@@ -116,30 +130,51 @@ const Signup = () => {
     openInNewTab(ROUTE.SHIPPING);
   }, []);
 
-  const clickAdditional = useCallback(
-    ({ currentTarget: { value } }: React.MouseEvent<HTMLInputElement>) => {
-      setAdditionalValue(value);
+  const handleAdditional = useCallback(
+    (value: string) => {
+      setAdditionalType(value);
       setJoinExtra('');
     },
-    [additionalValue],
+    [additionalType],
   );
 
-  const handleSubmit = useCallback(() => {
-    const notValidated = validatedList.find((raw) => {
-      debugger;
-      return _isBoolean(raw.condition) && !raw.condition;
-    });
+  const validate = (): boolean => {
+    const notValidated = validatedList.find((raw) => _isBoolean(raw.condition) && !raw.condition);
 
     if (notValidated) toggle();
 
     setNotValidated(notValidated);
+
+    return !!notValidated;
+  };
+
+  const handleSubmit = useCallback(() => {
+    if (validate() || !address || !checkedTermsList) return;
+
+    const { mainAddress, detailAddress } = address;
+
+    const data: IFormData = {
+      id,
+      pw,
+      name,
+      phone,
+      address: mainAddress,
+      detailAddress,
+      gender,
+      birth,
+      additionalType,
+      additionalValue: joinExtra,
+      terms: checkedTermsList.map(({ id }) => id),
+    };
+
+    console.log(data);
   }, [
     id,
     isIdChecked,
     isEmailChecked,
     isConfirmationCode,
     email,
-    verifyCode,
+    phone,
     pw,
     confirmPw,
     isRequiredTermsChecked,
@@ -175,7 +210,8 @@ const Signup = () => {
   };
 
   const setRequiredChecked = useCallback(
-    (isRequiredChecked: boolean) => {
+    (isRequiredChecked: boolean, checkedTermsList: ITerms[]) => {
+      if (isRequiredChecked) setCheckedTermsList(checkedTermsList);
       setIsRequiredTermsChecked(isRequiredChecked);
     },
     [isRequiredTermsChecked],
@@ -186,6 +222,21 @@ const Signup = () => {
       setIsConfirmationCode(isConfirmationCode);
     },
     [isConfirmationCode],
+  );
+
+  const handleGender = useCallback(
+    (gender: string) => {
+      debugger;
+      setGender(gender);
+    },
+    [gender],
+  );
+
+  const handleBirth = useCallback(
+    (y: string, m: string, d: string) => {
+      setBirth(`${y},${m},${d}`);
+    },
+    [birth],
   );
 
   const toggle = () => setIsOpen((prev) => !prev);
@@ -257,12 +308,7 @@ const Signup = () => {
           onClick={handleDoubleCheck(InputType.Email)}
           modalMessage={confirmAgain(InputType.Email, email)}
         />
-        <VerifyPhone
-          onChange={handleVerifyCode}
-          setIsConfirmationCode={changeIsConfirmationCode}
-          //
-        />
-
+        <VerifyPhone onChange={handlePhone} setIsConfirmationCode={changeIsConfirmationCode} />
         <Field.Wrapper className="address-field">
           <Field.Left label="주소" isRequired />
           <Field.Center>
@@ -283,14 +329,14 @@ const Signup = () => {
         <Field.Wrapper>
           <Field.Left label="성별" />
           <Field.Center>
-            <CheckList checkList={[man, woman, none]} />
+            <CheckList checkList={[man, woman, none]} onClick={handleGender} />
           </Field.Center>
           <Field.Right />
         </Field.Wrapper>
         <Field.Wrapper className="birth-field">
           <Field.Left label="생년월일" />
           <Field.Center>
-            <BirthInput />
+            <BirthInput setBirth={handleBirth} />
           </Field.Center>
           <Field.Right />
         </Field.Wrapper>
@@ -305,7 +351,6 @@ const Signup = () => {
                   id: 'additional-recommender',
                   name: 'joinExtraInputType',
                   value: CheckValue.Recommend,
-                  onClick: clickAdditional,
                 },
                 {
                   isChecked: false,
@@ -313,28 +358,28 @@ const Signup = () => {
                   id: 'additional-event',
                   name: 'joinExtraInputType',
                   value: CheckValue.Event,
-                  onClick: clickAdditional,
                 },
               ]}
+              onClick={handleAdditional}
             />
           </Field.Center>
           <Field.Right />
         </Field.Wrapper>
-        {additionalValue && (
+        {additionalType && (
           <Field.Wrapper>
             <Field.Left />
             <Field.Center>
               <Input
                 onChange={updateJoinExtra}
                 placeholder={
-                  additionalValue === CheckValue.Recommend
+                  additionalType === CheckValue.Recommend
                     ? '추천인 아이디를 입력해주세요.'
                     : '참여 이벤트명을 입력해 주세요.'
                 }
                 defaultValue={joinExtra}
               />
               <p className="description">
-                {additionalValue === CheckValue.Recommend ? (
+                {additionalType === CheckValue.Recommend ? (
                   '가입 후 7일 내 첫 주문 배송완료 시, 친구초대 이벤트 적립금이 지급됩니다.'
                 ) : (
                   <>

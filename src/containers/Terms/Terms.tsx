@@ -14,9 +14,9 @@ enum TermsType {
 }
 
 interface ITermsProps {
-  setRequiredChecked: (isRequiredChecked: boolean) => void;
+  setRequiredChecked: (isRequiredChecked: boolean, checkedTermsList: ITerms[]) => void;
 }
-interface ITerms {
+export interface ITerms {
   id: TermsType;
   isParent?: boolean;
   content: string;
@@ -85,8 +85,20 @@ const Terms = ({ setRequiredChecked }: ITermsProps) => {
   const [termsList, setTermsList] = useState<ITerms[]>(data);
   const [isAllChecked, setIsAllChecked] = useState(false);
   const requiredList = termsList.filter(({ isRequired }) => isRequired);
-
   const getIsChecked = (terms: ITerms) => terms.isChecked;
+  const getCheckedTerms = (termsList: ITerms[]) => {
+    let checkedTermsList: ITerms[] = [];
+
+    for (const terms of termsList) {
+      const { isChecked, subTerms } = terms;
+      if (subTerms) {
+        checkedTermsList = [...checkedTermsList, ...subTerms.terms.filter((subRaw) => subRaw.isChecked)];
+      }
+
+      if (isChecked) checkedTermsList.push(terms);
+    }
+    return checkedTermsList;
+  };
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLInputElement>) => {
@@ -141,7 +153,9 @@ const Terms = ({ setRequiredChecked }: ITermsProps) => {
 
   useEffect(() => {
     const isRequiredChecked = requiredList.every((terms) => terms.isChecked);
-    setRequiredChecked(isRequiredChecked);
+    const checkedTermsList = getCheckedTerms(termsList);
+    setRequiredChecked(isRequiredChecked, checkedTermsList);
+    // 필수 조건 요소를 다 클릭했을 경우 데이터를 전달한다.
   }, [termsList, isAllChecked]);
 
   return (
