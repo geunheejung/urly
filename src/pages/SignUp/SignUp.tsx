@@ -46,6 +46,7 @@ const Signup = () => {
   const [isRequiredTermsChecked, setIsRequiredTermsChecked] = useState(false);
   const [isConfirmationCode, setIsConfirmationCode] = useState(false); // 인증번호 확인 완료 시 true / 재인증 시 초기화
   const [notValidated, setNotValidated] = useState<{ id: InputType; message: string }>();
+
   const validatedList: ValidatedData[] = [
     { id: InputType.Id, data: id, message: '아이디 중복체크 해주세요.', condition: isIdChecked },
     { id: InputType.Email, data: email, message: '이메일 중복체크 해주세요.', condition: isEmailChecked },
@@ -63,8 +64,13 @@ const Signup = () => {
       message: '필수인증약관 동의 해주세요.',
       condition: isRequiredTermsChecked,
     },
-    { id: InputType.Name, data: name, message: '이름 입력 해주세요.' },
-    { id: InputType.Address, data: address, message: '주소 입력 해주세요.' },
+    { id: InputType.Name, data: name, message: '이름 입력 해주세요.', condition: !!name },
+    {
+      id: InputType.Address,
+      data: address,
+      message: '주소 입력 해주세요.',
+      condition: !!(address && address.mainAddress),
+    },
   ];
 
   const handleId = useCallback(
