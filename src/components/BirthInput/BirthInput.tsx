@@ -1,10 +1,14 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import moment from 'moment';
 import Input from '@/stories/Input';
 import useInput from '@/hooks/useInput';
 import './birthInput.scss';
 
-const BirthInput = () => {
+interface IProps {
+  setBirth: (year: string, month: string, day: string) => void;
+}
+
+const BirthInput = ({ setBirth }: IProps) => {
   const [year, , updateYear] = useInput('');
   const [month, , updateMonth] = useInput('');
   const [day, , updateDay] = useInput('');
@@ -25,14 +29,20 @@ const BirthInput = () => {
     if (!d || d < 0 || d > 31) return '태어난 일을 정확하게 입력해주세요.';
   }, [year, month, day]);
 
+  useEffect(() => {
+    if (year && month && day && !validate()) {
+      setBirth(year, month, day);
+    }
+  }, [year, month, day]);
+
   return (
     <>
       <div className="birth-input-wrapper">
-        <Input type="text" maxLength={4} placeholder="YYYY" onChange={updateYear} />
+        <Input type="number" maxLength={4} placeholder="YYYY" onChange={updateYear} />
         <span />
-        <Input type="text" maxLength={2} placeholder="MM" onChange={updateMonth} />
+        <Input type="number" maxLength={2} placeholder="MM" onChange={updateMonth} />
         <span />
-        <Input type="text" maxLength={2} placeholder="DD" onChange={updateDay} />
+        <Input type="number" maxLength={2} placeholder="DD" onChange={updateDay} />
       </div>
       <p className="warning">{validate()}</p>
     </>

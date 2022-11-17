@@ -48,12 +48,13 @@ const Input = ({
   const [warning, setWarning] = useState('');
   const mode = primary ? 'storybook-input--primary' : 'storybook-input--secondary';
 
-  const handleValue = useCallback(
+  const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const {
         target: { value },
       } = e;
       if (ignore && ignore.test(value)) return;
+      if (maxLength < value.length) return;
 
       setValue(value);
       setWarning(signupValidate(value, inputType));
@@ -65,9 +66,8 @@ const Input = ({
     [ignore, value, inputType, onChange],
   );
 
-  const _handleChange = _throttle(handleValue, 300);
-
   const _warning = warningMessage || warning;
+  const _handleChange = _throttle(handleChange, 100);
 
   useEffect(() => {
     if (value !== defaultValue) setValue(defaultValue);
