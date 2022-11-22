@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { RULE } from './common';
 import { code } from './helper';
 
@@ -118,4 +119,10 @@ export const validatePhoneCode = (payload: IValidatePhoneCode): Promise<IRespons
       throw new ApiError('다시 시도해주세요.', '400');
     }
   });
+};
+
+export const testApi = async () => {
+  const res = await axios.get('/api');
+
+  console.log(res);
 };
