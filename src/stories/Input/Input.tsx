@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import _throttle from 'lodash/throttle';
-import { signupValidate } from '../../helper';
+import { signupValidate } from '../../services/helper';
 import { formatter } from '@/hooks/useTimer';
 import './input.scss';
 

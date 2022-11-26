@@ -2,22 +2,32 @@ import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import _isBoolean from 'lodash/isBoolean';
 import Check from '@/stories/Check';
 
-enum TermsType {
-  TermsAgreeAll = 'TermsAgreeAll',
-  RequiredTermsCondition = 'RequiredTermsCondition',
-  RequiredTermsOfPrivacy = 'RequiredTermsOfPrivacy',
-  OptionalTermsOfPrivacy = 'OptionalTermsOfPrivacy',
-  SignupEventAll = 'SignupEventAll',
-  OptionalTermsOfSms = 'OptionalTermsOfSms',
-  OptionalTermsOfMailing = 'OptionalTermsOfMailing',
-  RequiredSignupAge = 'RequiredSignupAge',
+enum TermsKey {
+  TermsAgreeAll = 'termsAgreeAll',
+  RequiredTermsCondition = 'requiredTermsCondition',
+  RequiredTermsOfPrivacy = 'requiredTermsOfPrivacy',
+  OptionalTermsOfPrivacy = 'optionalTermsOfPrivacy',
+  SignupEventAll = 'signupEventAll',
+  OptionalTermsOfSms = 'optionalTermsOfSms',
+  OptionalTermsOfMailing = 'optionalTermsOfMailing',
+  RequiredSignupAge = 'requiredSignupAge',
 }
 
+export type TermsType = {
+  requiredTermsCondition: boolean;
+  requiredTermsOfPrivacy: boolean;
+  optionalTermsOfPrivacy: boolean;
+  signupEventAll: boolean;
+  optionalTermsOfSms: boolean;
+  optionalTermsOfMailing: boolean;
+  requiredSignupAge: boolean;
+};
+
 interface ITermsProps {
-  setRequiredChecked: (isRequiredChecked: boolean, checkedTermsList: ITerms[]) => void;
+  setRequiredChecked: (isRequiredChecked: boolean, terms: ITerms[]) => void;
 }
 export interface ITerms {
-  id: TermsType;
+  id: TermsKey;
   isParent?: boolean;
   content: string;
   isRequired?: boolean;
@@ -32,25 +42,25 @@ export interface ITerms {
 const Terms = ({ setRequiredChecked }: ITermsProps) => {
   const data: ITerms[] = [
     {
-      id: TermsType.RequiredTermsCondition,
+      id: TermsKey.RequiredTermsCondition,
       isChecked: false,
       content: '이용약관 동의',
       isRequired: true,
     },
     {
-      id: TermsType.RequiredTermsOfPrivacy,
+      id: TermsKey.RequiredTermsOfPrivacy,
       isChecked: false,
       content: '개인정보 수집∙이용 동의',
       isRequired: true,
     },
     {
-      id: TermsType.OptionalTermsOfPrivacy,
+      id: TermsKey.OptionalTermsOfPrivacy,
       isChecked: false,
       content: '개인정보 수집∙이용 동의',
       isRequired: false,
     },
     {
-      id: TermsType.SignupEventAll,
+      id: TermsKey.SignupEventAll,
       isChecked: false,
       isParent: true,
       content: '무료배송, 할인쿠폰 등 혜택/정보 수신 동의',
@@ -58,14 +68,14 @@ const Terms = ({ setRequiredChecked }: ITermsProps) => {
       subTerms: {
         terms: [
           {
-            id: TermsType.OptionalTermsOfSms,
+            id: TermsKey.OptionalTermsOfSms,
             isChecked: false,
             content: 'SMS',
             isRequired: false,
             after: <p className="description">동의 시 한 달간 [5%적립] + [2만원 이상 무료배송] 첫 주문 후 안내</p>,
           },
           {
-            id: TermsType.OptionalTermsOfMailing,
+            id: TermsKey.OptionalTermsOfMailing,
             isChecked: false,
             content: '이메일',
             isRequired: false,
@@ -75,7 +85,7 @@ const Terms = ({ setRequiredChecked }: ITermsProps) => {
       },
     },
     {
-      id: TermsType.RequiredSignupAge,
+      id: TermsKey.RequiredSignupAge,
       isChecked: false,
       content: '본인은 만 14세 이상입니다.',
       isRequired: true,
@@ -86,19 +96,6 @@ const Terms = ({ setRequiredChecked }: ITermsProps) => {
   const [isAllChecked, setIsAllChecked] = useState(false);
   const requiredList = termsList.filter(({ isRequired }) => isRequired);
   const getIsChecked = (terms: ITerms) => terms.isChecked;
-  const getCheckedTerms = (termsList: ITerms[]) => {
-    let checkedTermsList: ITerms[] = [];
-
-    for (const terms of termsList) {
-      const { isChecked, subTerms } = terms;
-      if (subTerms) {
-        checkedTermsList = [...checkedTermsList, ...subTerms.terms.filter((subRaw) => subRaw.isChecked)];
-      }
-
-      if (isChecked) checkedTermsList.push(terms);
-    }
-    return checkedTermsList;
-  };
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLInputElement>) => {
@@ -153,15 +150,14 @@ const Terms = ({ setRequiredChecked }: ITermsProps) => {
 
   useEffect(() => {
     const isRequiredChecked = requiredList.every((terms) => terms.isChecked);
-    const checkedTermsList = getCheckedTerms(termsList);
-    setRequiredChecked(isRequiredChecked, checkedTermsList);
+    setRequiredChecked(isRequiredChecked, termsList);
     // 필수 조건 요소를 다 클릭했을 경우 데이터를 전달한다.
   }, [termsList, isAllChecked]);
 
   return (
     <>
       <div className="field">
-        <Check.Box id={TermsType.TermsAgreeAll} isChecked={isAllChecked} onClick={handleAllCheck}>
+        <Check.Box id={TermsKey.TermsAgreeAll} isChecked={isAllChecked} onClick={handleAllCheck}>
           <span>전체 동의합니다.</span>
           <span className="required">(필수)</span>
         </Check.Box>

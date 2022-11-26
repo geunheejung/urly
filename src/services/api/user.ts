@@ -1,6 +1,8 @@
 import axios from 'axios';
-import { RULE } from './common';
-import { code } from './helper';
+import { RULE } from '@/common';
+import { code } from '@/services/helper';
+import { customAxios } from '@/services/customAxios';
+import { ICreateUserPayload } from '../../../../types/api';
 
 export enum API_STATUS {
   REQUEST = 'REQUEST',
@@ -65,9 +67,6 @@ export interface IResponse {
 const user: { [phone: string]: string } = {};
 
 export const verifyCode = (payload: IVerificationCode): Promise<IResponse> => {
-  // 전화번호를 받는다.
-  // 양식을 체크한다.
-  // 임의로 타이머 걸고, 그 후에 인증번호 리턴
   const { phone } = payload;
 
   return new Promise((resolve, reject) => {
@@ -98,10 +97,6 @@ export interface IValidatePhoneCode {
   code: string;
 }
 export const validatePhoneCode = (payload: IValidatePhoneCode): Promise<IResponse> => {
-  // 1. 전화번호, 인증번호를 받는다.
-  // 2. user 객체에서 전화번호로 접근한다.
-  // 3. 전달받은 인증번호와 전송한 인증번호가 서로 맞는지 확인한다.
-
   return new Promise((resolve, reject) => {
     try {
       fetch('https://jsonplaceholder.typicode.com/todos/1').then((res) => {
@@ -121,8 +116,20 @@ export const validatePhoneCode = (payload: IValidatePhoneCode): Promise<IRespons
   });
 };
 
-export const testApi = async () => {
-  const res = await axios.get('/api');
+export const getUser = async () => {
+  try {
+    const res = await customAxios.get('/user');
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
 
-  console.log(res);
+export const createUser = async (payload: ICreateUserPayload) => {
+  try {
+    const res = await customAxios.post('/user', payload);
+    return res;
+  } catch (error) {
+    throw error;
+  }
 };

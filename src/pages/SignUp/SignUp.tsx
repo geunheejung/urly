@@ -13,12 +13,13 @@ import { CheckList } from '@/stories/Check/List/CheckList';
 import { IAddress } from '../ShippingAddress/Result';
 import { InputType } from '@/stories/Input/Input';
 import { GENDER, ROUTE, RULE } from '@/common';
-import { confirmEmail, confirmId } from '@/api';
-import { openInNewTab, signupValidate } from '@/helper';
+import { openInNewTab, signupValidate } from '@/services/helper';
 import { man, none, woman } from '@/stories/Check/Check.stories';
+import { ITerms, TermsType } from '@/containers/Terms/Terms';
+import { confirmEmail, confirmId, createUser } from '@/services/api/user';
 
 import './signUp.scss';
-import { ITerms } from '@/containers/Terms/Terms';
+import { ICreateUserPayload } from '../../../../types/api';
 
 enum CheckValue {
   Recommend = 'RECOMMEND',
@@ -29,20 +30,6 @@ interface ValidatedData {
   id: InputType;
   message: string;
   condition?: boolean;
-}
-
-interface IFormData {
-  id: string;
-  pw: string;
-  name: string;
-  phone: string;
-  address: string;
-  detailAddress?: string;
-  gender: string;
-  birth?: string;
-  additionalType?: string;
-  additionalValue?: string;
-  terms: string[];
 }
 
 const Signup = () => {
@@ -56,11 +43,12 @@ const Signup = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [phone, , handlePhone] = useInput('');
   const [address] = useLocalStorageState<IAddress>('address');
+  const [_detailAddress, , handleDetailAddress] = useInput('');
   const [gender, setGender] = useState(GENDER.MALE);
   const [additionalType, setAdditionalType] = useState('');
   const [birth, setBirth] = useState('');
   const [joinExtra, setJoinExtra, updateJoinExtra] = useInput('');
-  const [checkedTermsList, setCheckedTermsList] = useState<ITerms[]>();
+  const [terms, setTerms] = useState<ITerms[]>();
   const [isRequiredTermsChecked, setIsRequiredTermsChecked] = useState(false);
   const [isConfirmationCode, setIsConfirmationCode] = useState(false); // 인증번호 확인 완료 시 true / 재인증 시 초기화
   const [notValidated, setNotValidated] = useState<{ id: InputType; message: string }>();
@@ -148,26 +136,33 @@ const Signup = () => {
     return !!notValidated;
   };
 
-  const handleSubmit = useCallback(() => {
-    if (validate() || !address || !checkedTermsList) return;
+  const handleSubmit = useCallback(async () => {
+    if (validate() || !address || !terms) return;
 
     const { mainAddress, detailAddress } = address;
 
-    const data: IFormData = {
+    const _terms = terms.reduce((prev: { [id: string]: boolean }, { id, isChecked, subTerms }) => {
+      if (subTerms) subTerms.terms.forEach((sub) => (prev[sub.id] = sub.isChecked));
+
+      prev[id] = isChecked;
+      return prev;
+    }, {}) as TermsType;
+
+    const data: ICreateUserPayload = {
       id,
-      pw,
+      password: pw,
       name,
       phone,
       address: mainAddress,
-      detailAddress,
+      detailAddress: _detailAddress || detailAddress,
       gender,
       birth,
       additionalType,
       additionalValue: joinExtra,
-      terms: checkedTermsList.map(({ id }) => id),
+      ..._terms,
     };
 
-    console.log(data);
+    await createUser(data);
   }, [
     id,
     isIdChecked,
@@ -210,8 +205,8 @@ const Signup = () => {
   };
 
   const setRequiredChecked = useCallback(
-    (isRequiredChecked: boolean, checkedTermsList: ITerms[]) => {
-      if (isRequiredChecked) setCheckedTermsList(checkedTermsList);
+    (isRequiredChecked: boolean, terms: ITerms[]) => {
+      if (isRequiredChecked) setTerms(terms);
       setIsRequiredTermsChecked(isRequiredChecked);
     },
     [isRequiredTermsChecked],
@@ -226,7 +221,6 @@ const Signup = () => {
 
   const handleGender = useCallback(
     (gender: string) => {
-      debugger;
       setGender(gender);
     },
     [gender],
@@ -315,7 +309,11 @@ const Signup = () => {
             {address ? (
               <>
                 <Input defaultValue={address.mainAddress} readOnly />
-                <Input defaultValue={address.detailAddress} placeholder="나머지 주소를 입력해주세요" />
+                <Input
+                  defaultValue={address.detailAddress}
+                  placeholder="나머지 주소를 입력해주세요"
+                  onChange={handleDetailAddress}
+                />
                 <div className="description">택배배송</div>
               </>
             ) : (

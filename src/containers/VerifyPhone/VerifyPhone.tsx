@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState, forwardRef } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import _throttle from 'lodash/throttle';
-import { ApiError, API_STATUS, IResponse, validatePhoneCode, verifyCode } from '@/api';
+import { ApiError, API_STATUS, IResponse, validatePhoneCode, verifyCode } from '@/services/api/user';
 import { RULE } from '@/common';
 import useInput from '@/hooks/useInput';
 import useTimer from '@/hooks/useTimer';

@@ -1,6 +1,6 @@
 import { RULE } from '@/common';
 import { InputType } from '@/stories/Input/Input';
-import { confirmEmail, confirmId } from './api';
+import { confirmEmail, confirmId } from '@/services/api/user';
 
 export const openInNewTab = (url: string) => {
   const W = 540,
