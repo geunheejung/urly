@@ -75,9 +75,11 @@ const Field = ({
       </Center>
       <Right>{button && <Button disabled={disabled} label={button} onClick={handleClick} {..._buttonProps} />}</Right>
 
-      <Modal isOpen={isOpen} onConfirm={toggleModal}>
-        {modalMessage}
-      </Modal>
+      {modalMessage && (
+        <Modal isOpen={isOpen} onConfirm={toggleModal}>
+          {modalMessage}
+        </Modal>
+      )}
     </div>
   );
 };

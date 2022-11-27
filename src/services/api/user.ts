@@ -2,7 +2,7 @@ import axios from 'axios';
 import { RULE } from '@/common';
 import { code } from '@/services/helper';
 import { customAxios } from '@/services/customAxios';
-import { ICreateUserPayload } from '../../../../types/api';
+import { ICheckExistsPayload, IUser, IApiResponse } from '../../../../types/api';
 
 export enum API_STATUS {
   REQUEST = 'REQUEST',
@@ -125,10 +125,21 @@ export const getUser = async () => {
   }
 };
 
-export const createUser = async (payload: ICreateUserPayload) => {
+export const createUser = async (payload: IUser) => {
   try {
     const res = await customAxios.post('/user', payload);
     return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const existsUser = async (payload: ICheckExistsPayload) => {
+  try {
+    const {
+      data: { data: isExists, message },
+    } = await customAxios.post<IApiResponse<boolean>>('/user/exists-check', payload);
+    return { isExists, message };
   } catch (error) {
     throw error;
   }

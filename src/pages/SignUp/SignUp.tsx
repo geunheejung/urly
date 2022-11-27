@@ -16,10 +16,10 @@ import { GENDER, ROUTE, RULE } from '@/common';
 import { openInNewTab, signupValidate } from '@/services/helper';
 import { man, none, woman } from '@/stories/Check/Check.stories';
 import { ITerms, TermsType } from '@/containers/Terms/Terms';
-import { confirmEmail, confirmId, createUser } from '@/services/api/user';
+import { confirmEmail, confirmId, createUser, existsUser } from '@/services/api/user';
 
 import './signUp.scss';
-import { ICreateUserPayload } from '../../../../types/api';
+import { IUser } from '../../../../types/api';
 
 enum CheckValue {
   Recommend = 'RECOMMEND',
@@ -52,6 +52,7 @@ const Signup = () => {
   const [isRequiredTermsChecked, setIsRequiredTermsChecked] = useState(false);
   const [isConfirmationCode, setIsConfirmationCode] = useState(false); // 인증번호 확인 완료 시 true / 재인증 시 초기화
   const [notValidated, setNotValidated] = useState<{ id: InputType; message: string }>();
+  const [modalValue, setModalValue] = useState('');
 
   const validatedList: ValidatedData[] = [
     { id: InputType.Id, message: '아이디 중복체크 해주세요.', condition: isIdChecked },
@@ -92,20 +93,6 @@ const Signup = () => {
     [email],
   );
 
-  const confirmAgain = useCallback(
-    (inputType: InputType, value: string) => {
-      const message = signupValidate(value, inputType);
-
-      if (message) return message;
-
-      const isId = inputType === InputType.Id;
-      const isValidated = isId ? confirmId(value) : confirmEmail(value);
-
-      return isValidated ? '사용 불가능 합니다.' : '사용 가능 합니다.';
-    },
-    [notValidated, id, email],
-  );
-
   const getConfirmPwMsg = useCallback(() => {
     const message = '';
 
@@ -129,7 +116,10 @@ const Signup = () => {
   const validate = (): boolean => {
     const notValidated = validatedList.find((raw) => _isBoolean(raw.condition) && !raw.condition);
 
-    if (notValidated) toggle();
+    if (notValidated) {
+      toggle();
+      setModalValue(notValidated.message);
+    }
 
     setNotValidated(notValidated);
 
@@ -148,7 +138,7 @@ const Signup = () => {
       return prev;
     }, {}) as TermsType;
 
-    const data: ICreateUserPayload = {
+    const data: IUser = {
       id,
       password: pw,
       name,
@@ -177,15 +167,22 @@ const Signup = () => {
     address,
   ]);
 
-  const handleDoubleCheck = (id: InputType) =>
+  const handleDoubleCheck = (inputType: InputType) =>
     useCallback(
-      (value: string, toggle: () => void) => {
-        const isValidated = !signupValidate(value, id);
-        if (id === InputType.Id) setIsIdChecked(isValidated);
-        else setIsEmailChecked(isValidated);
+      async (value: string) => {
+        const { isExists, message } = await existsUser({
+          value,
+          field: inputType === InputType.Id ? InputType.Id : InputType.Email,
+        });
+        const warningMessage = signupValidate(value, inputType) || message;
+
+        const isValidated = !warningMessage && isExists;
+
+        inputType === InputType.Id ? setIsIdChecked(isValidated) : setIsEmailChecked(isValidated);
+        setModalValue(warningMessage);
         toggle();
       },
-      [isIdChecked, isEmailChecked, id, email],
+      [id, email, isIdChecked, isEmailChecked, modalValue, isOpen],
     );
 
   const handleConfirm = useCallback(() => {
@@ -255,7 +252,6 @@ const Signup = () => {
           button="중복확인"
           disabled={isIdChecked}
           onClick={handleDoubleCheck(InputType.Id)}
-          modalMessage={confirmAgain(InputType.Id, id)}
         />
         <Field
           label="비밀번호"
@@ -300,7 +296,6 @@ const Signup = () => {
           button="중복확인"
           disabled={isEmailChecked}
           onClick={handleDoubleCheck(InputType.Email)}
-          modalMessage={confirmAgain(InputType.Email, email)}
         />
         <VerifyPhone onChange={handlePhone} setIsConfirmationCode={changeIsConfirmationCode} />
         <Field.Wrapper className="address-field">
@@ -407,7 +402,7 @@ const Signup = () => {
         </div>
       </div>
       <Modal isOpen={isOpen} onConfirm={handleConfirm} onAfterClose={handleAfterClose}>
-        {notValidated && notValidated.message}
+        {modalValue}
       </Modal>
     </div>
   );

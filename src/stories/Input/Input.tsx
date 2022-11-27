@@ -5,14 +5,14 @@ import { formatter } from '@/hooks/useTimer';
 import './input.scss';
 
 export const enum InputType {
-  Id = 'ID',
-  Pw = 'PASSWORD',
-  DoublePw = 'DOUBLE_PW',
-  Name = 'NAME',
-  Email = 'EMAIL',
-  Phone = 'PHONE',
-  Terms = 'TERMS',
-  Address = 'ADDRESS',
+  Id = 'id',
+  Pw = 'password',
+  DoublePw = 'double_pw',
+  Name = 'name',
+  Email = 'email',
+  Phone = 'phone',
+  Terms = 'terms',
+  Address = 'address',
 }
 
 export interface InputProps {
