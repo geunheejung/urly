@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import _isBoolean from 'lodash/isBoolean';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import useLocalStorageState from 'use-local-storage-state';
 import useInput from '@/hooks/useInput';
 import Button from '@/stories/Button';
@@ -16,10 +17,10 @@ import { GENDER, ROUTE, RULE } from '@/common';
 import { openInNewTab, signupValidate } from '@/services/helper';
 import { man, none, woman } from '@/stories/Check/Check.stories';
 import { ITerms, TermsType } from '@/containers/Terms/Terms';
-import { confirmEmail, confirmId, createUser, existsUser } from '@/services/api/user';
+import { createUser, existsUser } from '@/services/api/user';
 
 import './signUp.scss';
-import { IUser } from '../../../../types/api';
+import { ICheckExistsPayload, IUser } from '../../../../types/api';
 
 enum CheckValue {
   Recommend = 'RECOMMEND',
@@ -36,6 +37,7 @@ const Signup = () => {
   const [id, setId] = useState('');
   const [isIdChecked, setIsIdChecked] = useState(false);
   const [isEmailChecked, setIsEmailChecked] = useState(false);
+
   const [pw, , handlePw] = useInput('');
   const [confirmPw, , handleConfirmPw] = useInput('');
   const [name, , handleName] = useInput('');
@@ -53,6 +55,16 @@ const Signup = () => {
   const [isConfirmationCode, setIsConfirmationCode] = useState(false); // 인증번호 확인 완료 시 true / 재인증 시 초기화
   const [notValidated, setNotValidated] = useState<{ id: InputType; message: string }>();
   const [modalValue, setModalValue] = useState('');
+
+  const { mutate: existsUserMutate } = useMutation(existsUser, {
+    onSuccess: ({ isExists, message }, { field }) => {
+      updateCheckedBy(field, isExists);
+      setModalValue(message);
+    },
+  });
+
+  const updateCheckedBy = (inputType: string, value: boolean) =>
+    inputType === InputType.Id ? setIsIdChecked(value) : setIsEmailChecked(value);
 
   const validatedList: ValidatedData[] = [
     { id: InputType.Id, message: '아이디 중복체크 해주세요.', condition: isIdChecked },
@@ -170,15 +182,16 @@ const Signup = () => {
   const handleDoubleCheck = (inputType: InputType) =>
     useCallback(
       async (value: string) => {
-        const { isExists, message } = await existsUser({
-          value,
-          field: inputType === InputType.Id ? InputType.Id : InputType.Email,
-        });
-        const warningMessage = signupValidate(value, inputType) || message;
+        const warningMessage = signupValidate(value, inputType);
+        const isValidated = !warningMessage;
 
-        const isValidated = !warningMessage && isExists;
+        if (isValidated)
+          await existsUserMutate({
+            value,
+            field: inputType === InputType.Id ? InputType.Id : InputType.Email,
+          });
 
-        inputType === InputType.Id ? setIsIdChecked(isValidated) : setIsEmailChecked(isValidated);
+        updateCheckedBy(inputType, isValidated);
         setModalValue(warningMessage);
         toggle();
       },
