@@ -1,5 +1,6 @@
 import { RULE } from '@/common';
 import { InputType } from '@/stories/Input/Input';
+import jwtDecode from 'jwt-decode';
 
 export const openInNewTab = (url: string) => {
   const W = 540,
@@ -61,3 +62,5 @@ export const code = () => {
 
   return num;
 };
+
+export const decoded = (token: string): { id: number } => jwtDecode(token);

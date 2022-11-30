@@ -2,7 +2,8 @@ import axios from 'axios';
 import { RULE } from '@/common';
 import { code } from '@/services/helper';
 import { customAxios } from '@/services/customAxios';
-import { ICheckExistsPayload, IUser, IApiResponse } from '../../../../types/api';
+import { ICheckExistsPayload, IUser, IApiResponse, ILoginPayload, IUserSchema } from '../../../../types/api';
+import { setRefreshToken } from '@/services/cookie';
 
 export enum API_STATUS {
   REQUEST = 'REQUEST',
@@ -79,14 +80,22 @@ export const validatePhoneCode = (payload: IValidatePhoneCode): Promise<IRespons
   });
 };
 
-export const getUser = async () => {
+interface IGetUserPayload {
+  userId: number;
+}
+export const getUser = async <T = IUserSchema>(payload?: IGetUserPayload) => {
   try {
-    const res = await customAxios.get('/user');
+    const url = `/user`;
+    const path = payload ? `/${payload.userId}` : '';
+    const res = await customAxios.get<T>(`${url}${path}`);
+
     return res;
   } catch (error) {
     throw error;
   }
 };
+
+export const getUserList = () => getUser<IUserSchema[]>();
 
 export const createUser = async (payload: IUser) => {
   try {
@@ -102,6 +111,31 @@ export const existsUser = async (payload: ICheckExistsPayload) => {
       data: { data: isExists, message },
     } = await customAxios.post<IApiResponse<boolean>>('/user/exists-check', payload);
     return { isExists, message };
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const login = async (payload: ILoginPayload) => {
+  try {
+    const {
+      data: { data },
+    } = await customAxios.post<IApiResponse<{ accessToken: string; refreshToken: string }>>('/user/login', payload);
+
+    const { accessToken, refreshToken } = data;
+    /**
+     * 1. refreshToken을 Cookie에 저장한다.
+     * 2. accessToken은 react-query로 저장한다.
+     * 3. accessToken을 디코딩해서 userId를 얻는다.
+     * 4. userId로 user 정보를 요청한다.
+     */
+
+    setRefreshToken(refreshToken);
+
+    // request header에 토큰 설정. (1) 로그인 시, (2) 토큰 갱신 시
+    customAxios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+
+    return data;
   } catch (error) {
     throw error;
   }
