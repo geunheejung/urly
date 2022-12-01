@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import _isBoolean from 'lodash/isBoolean';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation } from 'react-query';
 import useLocalStorageState from 'use-local-storage-state';
 import useInput from '@/hooks/useInput';
 import Button from '@/stories/Button';
@@ -18,9 +18,8 @@ import { openInNewTab, signupValidate } from '@/services/helper';
 import { man, none, woman } from '@/stories/Check/Check.stories';
 import { ITerms, TermsType } from '@/containers/Terms/Terms';
 import { createUser, existsUser } from '@/services/api/user';
-
+import { IUser, UserInfoType } from '../../../../types/api';
 import './signUp.scss';
-import { ICheckExistsPayload, IUser } from '../../../../types/api';
 
 enum CheckValue {
   Recommend = 'RECOMMEND',
@@ -55,6 +54,8 @@ const Signup = () => {
   const [isConfirmationCode, setIsConfirmationCode] = useState(false); // 인증번호 확인 완료 시 true / 재인증 시 초기화
   const [notValidated, setNotValidated] = useState<{ id: InputType; message: string }>();
   const [modalValue, setModalValue] = useState('');
+
+  const { mutate: createUserMutate } = useMutation(createUser, {});
 
   const { mutate: existsUserMutate } = useMutation(existsUser, {
     onSuccess: ({ isExists, message }, { field }) => {
@@ -150,6 +151,8 @@ const Signup = () => {
       return prev;
     }, {}) as TermsType;
 
+    // createUser 라는 hook을 만들고, 이 hook은 데이터를 받으면
+
     const data: IUser = {
       id,
       password: pw,
@@ -164,7 +167,7 @@ const Signup = () => {
       ..._terms,
     };
 
-    await createUser(data);
+    await createUserMutate(data);
   }, [
     id,
     isIdChecked,
@@ -182,10 +185,12 @@ const Signup = () => {
   const handleDoubleCheck = (inputType: InputType) =>
     useCallback(
       async (value: string) => {
+        // 1. 양식 체크
         const warningMessage = signupValidate(value, inputType);
         const isValidated = !warningMessage;
 
         if (isValidated)
+          // 2. 중복 체크
           await existsUserMutate({
             value,
             field: inputType === InputType.Id ? InputType.Id : InputType.Email,

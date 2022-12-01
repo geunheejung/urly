@@ -123,6 +123,7 @@ export const login = async (payload: ILoginPayload) => {
     } = await customAxios.post<IApiResponse<{ accessToken: string; refreshToken: string }>>('/user/login', payload);
 
     const { accessToken, refreshToken } = data;
+
     /**
      * 1. refreshToken을 Cookie에 저장한다.
      * 2. accessToken은 react-query로 저장한다.

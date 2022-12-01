@@ -88,7 +88,7 @@ const Input = ({
         />
         {ms && <span className="timer">{formatter(ms)}</span>}
       </div>
-      {_warning && <div className="warning">{warningMessage ? warningMessage() : warning}</div>}
+      {inputType && _warning && <div className="warning">{warningMessage ? warningMessage() : warning}</div>}
     </div>
   );
 };
