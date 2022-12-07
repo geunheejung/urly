@@ -59,7 +59,7 @@ const Signup = () => {
 
   const { mutate: existsUserMutate } = useMutation(existsUser, {
     onSuccess: ({ isExists, message }, { field }) => {
-      updateCheckedBy(field, isExists);
+      updateCheckedBy(field, !isExists);
       setModalValue(message);
     },
   });
@@ -127,7 +127,7 @@ const Signup = () => {
   );
 
   const validate = (): boolean => {
-    const notValidated = validatedList.find((raw) => _isBoolean(raw.condition) && !raw.condition);
+    const notValidated = validatedList.find((raw) => !raw.condition);
 
     if (notValidated) {
       toggle();
