@@ -17,7 +17,7 @@ export const MockData = {
 export const ROUTE = {
   HOME: '/',
   SIGN_UP: '/member/signup',
-  LOGIN: '/login',
+  LOGIN: '/member/login',
   SHIPPING: '/address/shipping-address',
   SHIPPING_RESULT: '/address/shipping-address/result',
 } as const;

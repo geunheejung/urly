@@ -3,7 +3,7 @@ import { RULE } from '@/common';
 import { code } from '@/services/helper';
 import { customAxios } from '@/services/customAxios';
 import { ICheckExistsPayload, IUser, IApiResponse, ILoginPayload, IUserSchema } from '../../../../types/api';
-import { setRefreshToken } from '@/services/cookie';
+import { removeRefreshToken, setRefreshToken, Token } from '@/services/cookie';
 
 export enum API_STATUS {
   REQUEST = 'REQUEST',
@@ -118,9 +118,17 @@ export const existsUser = async (payload: ICheckExistsPayload) => {
 
 export const login = async (payload: ILoginPayload) => {
   try {
+    const res = await customAxios.post<IApiResponse<{ accessToken: string; refreshToken: string }>>(
+      '/user/login',
+      payload,
+    );
     const {
-      data: { data },
-    } = await customAxios.post<IApiResponse<{ accessToken: string; refreshToken: string }>>('/user/login', payload);
+      data: { data, status },
+    } = res;
+
+    if (status === 401) {
+      throw 'invalid password';
+    }
 
     const { accessToken, refreshToken } = data;
 
@@ -137,6 +145,25 @@ export const login = async (payload: ILoginPayload) => {
     customAxios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
     return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const loggout = async () => {
+  try {
+    const res = await customAxios.post('/user/loggout');
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const refresh = async () => {
+  try {
+    const res = await customAxios.post('/user/refresh');
+
+    return res;
   } catch (error) {
     throw error;
   }

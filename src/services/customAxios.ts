@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
-import { Token } from './cookie';
+import { refresh } from './api/user';
+import { removeRefreshToken, Token } from './cookie';
 
 export const customAxios: AxiosInstance = axios.create({
   baseURL: `/api`,
@@ -14,6 +15,27 @@ customAxios.interceptors.request.use((config) => {
   }
 
   return config;
+});
+
+customAxios.interceptors.response.use(async (response) => {
+  const {
+    data: { status, message },
+  } = response;
+
+  if (status === 401) {
+    if (message === 'jwt expired') {
+      const accessToken = localStorage.getItem(Token.Access);
+
+      const res = await refresh();
+    }
+
+    if (message === 'Please Again Login') {
+      localStorage.removeItem(Token.Access);
+      removeRefreshToken();
+    }
+  }
+
+  return response;
 });
 
 // customAxios.defaults.headers.common['Authorization'] = `Bearer ${}`;

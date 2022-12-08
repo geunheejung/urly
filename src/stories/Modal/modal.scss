@@ -10,6 +10,10 @@
   overflow-x: hidden;
   background: rgba(0, 0, 0, 0.4);
 
+  &.secondary {
+    background: none;
+  }
+
   &.ReactModal__Overlay {
     opacity: 0;
     transition: opacity 100ms ease;
@@ -46,4 +50,11 @@
       }
     }
   }
+}
+
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
