@@ -1,0 +1,21 @@
+@import '../../Root.scss';
+
+.header-wrapper {
+  .member-wrapper {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    font-size: 12px;
+    line-height: 35px;
+
+    .signup {
+      color: $primary1;
+    }
+
+    .notice-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
