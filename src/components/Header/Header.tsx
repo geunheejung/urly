@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useMutation } from 'react-query';
-import { AiFillCaretDown } from 'react-icons/ai';
+import { AiFillCaretDown, AiFillCloseCircle, AiOutlineCloseCircle, AiOutlineSearch } from 'react-icons/ai';
 import Button from '@/stories/Button';
 import Dropdown from '@/components/Dropdown';
 import Quarter from '@/components/Quarter';
@@ -10,7 +10,7 @@ import { loggout } from '@/services/api/user';
 import { removeRefreshToken, Token } from '@/services/cookie';
 import { ROUTE } from '@/common';
 import queryClient from '@/services/queryClient';
-
+import logo from '../../images/logo.svg';
 import './header.scss';
 
 const Header = () => {
@@ -26,6 +26,7 @@ const Header = () => {
   });
 
   const [isOpen, setIsOpen] = useState(false);
+  const [keyword, setKeyword] = useState('');
 
   const updateIsOpen = (newIsOpen: boolean) =>
     useCallback(() => {
@@ -36,7 +37,23 @@ const Header = () => {
     loggoutMutate();
   }, [accessToken, user]);
 
+  const handleSearch = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setKeyword(e.target.value);
+    },
+    [keyword],
+  );
+
+  const handleClear = useCallback(() => {
+    setKeyword('');
+  }, [keyword]);
+
   const login = accessToken ? <Button onClick={handleLoggout}>로그아웃</Button> : <Link to={ROUTE.LOGIN}>로그인</Link>;
+  const clearBtn = keyword && (
+    <button className="clear-btn" onClick={handleClear}>
+      <AiFillCloseCircle size={18} />
+    </button>
+  );
 
   const quarter = <Quarter style={{ height: '13px', margin: '0 12px' }} />;
   return (
@@ -60,19 +77,29 @@ const Header = () => {
         </div>
       </div>
 
-      <div className="wrapper">
-        <div className="banner-wrapper">
+      <div className="main-banner-wrapper">
+        <div className="title-wrapper">
           <div className="banner">
-            <img src="/" alt="banner" />
+            <img src={logo} alt="banner" />
           </div>
-          <div className="title-wrapper">
-            <button>마켓컬리</button>
-            <span />
-            <button>뷰티컬리</button>
-          </div>
+          <NavLink to="/main" className={(props) => (props.isActive ? 'active' : '')}>
+            마켓컬리
+          </NavLink>
+          <Quarter style={{ height: 14, margin: '0 20px' }} />
+          <NavLink to="/main/beauty">뷰티컬리</NavLink>
         </div>
         <div className="search-wrapper">
-          <input type="text" />
+          <input
+            type="text"
+            value={keyword}
+            className="default-input"
+            placeholder="검색어를 입력해주세요."
+            onChange={handleSearch}
+          />
+          {clearBtn}
+          <button className="search-btn">
+            <AiOutlineSearch size={25} />
+          </button>
         </div>
         <div className="support-wrapper">
           <div>배송지 등록</div>

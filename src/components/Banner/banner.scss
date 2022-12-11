@@ -1,0 +1,29 @@
+.banner {
+  width: 100%;
+  min-width: 1050px;
+  height: 370px;
+  object-fit: cover;
+
+  &.show .slick-arrow {
+    opacity: 1;
+  }
+
+  .slick-arrow {
+    transition: opacity 0.3s;
+    opacity: 0;
+    position: absolute;
+    z-index: 1;
+  }
+
+  .slick-prev {
+    left: 200px;
+  }
+  .slick-next {
+    right: 225px;
+  }
+
+  .slick-prev:before,
+  .slick-next:before {
+    font-size: 52px;
+  }
+}

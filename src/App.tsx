@@ -12,7 +12,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/main" element={<Home />} />
         <Route path={ROUTE.SIGN_UP} element={<Signup />} />
         <Route path={ROUTE.LOGIN} element={<Login />} />
         <Route path={ROUTE.SHIPPING} element={<Shipping />} />

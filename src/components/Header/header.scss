@@ -1,0 +1,96 @@
+@import '../../Root.scss';
+
+.header-wrapper {
+  width: 1050px;
+  margin: 0 auto;
+
+  .member-wrapper {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    height: 36px;
+    font-size: 12px;
+    line-height: 35px;
+
+    .signup {
+      color: $primary1;
+    }
+
+    .notice-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .main-banner-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 36px 0 0 0;
+
+    .title-wrapper {
+      display: flex;
+      align-items: center;
+      margin: 0 58px 0 0;
+
+      .banner {
+        margin: 0 20px 0 0;
+      }
+
+      a {
+        flex-shrink: 0;
+        font-size: 18px;
+        font-weight: normal;
+        line-height: 1.33;
+        letter-spacing: normal;
+        color: $text7;
+
+        &.active {
+          color: $primary1;
+        }
+      }
+    }
+
+    .search-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 400px;
+      height: 48px;
+      padding: 0 14px;
+      border: 1px solid $primary1;
+      border-radius: 6px;
+
+      input {
+        width: 300px;
+        border: none;
+        outline: none;
+        font-size: 16px;
+      }
+
+      .clear-btn {
+        position: absolute;
+        right: 47px;
+        svg {
+          color: $primary2;
+        }
+      }
+
+      .search-btn {
+        height: 100%;
+        margin: 0 0 0 10px;
+        svg {
+          color: $primary1;
+        }
+      }
+    }
+  }
+
+  .support-wrapper {
+    display: flex;
+    position: absolute;
+    right: 0;
+  }
+}

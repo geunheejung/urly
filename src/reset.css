@@ -136,3 +136,11 @@ a {
   text-decoration: none;
   color: rgb(51, 51, 51);
 }
+
+button {
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+}
