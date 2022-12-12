@@ -5,6 +5,7 @@ import _isUndefined from 'lodash/isUndefined';
 import './button.scss';
 
 export interface ButtonProps {
+  type?: 'button' | 'submit' | 'reset' | undefined;
   primary?: boolean;
   backgroundColor?: string;
   size?: 'small' | 'medium' | 'large';
@@ -22,6 +23,7 @@ export const Button = ({
   label,
   children,
   isLoading,
+  type = 'button',
   ...props
 }: ButtonProps) => {
   const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
@@ -30,7 +32,7 @@ export const Button = ({
 
   return (
     <button
-      type="button"
+      type={type}
       className={classNames('storybook-button', `storybook-button--${size}`, mode, { loading: _isLoading })}
       style={{ backgroundColor }}
       {...props}

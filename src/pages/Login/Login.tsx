@@ -67,14 +67,18 @@ const Login = () => {
     },
   });
 
-  const handleLogin = useCallback(async () => {
-    if (!(id && pw)) {
-      updateErrorMsg();
-      toggle(true);
-      return;
-    }
-    const res = await loginMutate({ id, password: pw });
-  }, [id, pw]);
+  const handleLogin = useCallback(
+    async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      if (!(id && pw)) {
+        updateErrorMsg();
+        toggle(true);
+        return;
+      }
+      const res = await loginMutate({ id, password: pw });
+    },
+    [id, pw],
+  );
 
   const handleConfirm = useCallback(() => {
     toggle((prev) => !prev);
@@ -87,7 +91,7 @@ const Login = () => {
   return (
     <div className="login-page">
       <div className="title">로그인</div>
-      <form>
+      <form onSubmit={handleLogin}>
         <Input type="text" onChange={handleId} placeholder="아이디를 입력해주세요." />
         <Input type="password" onChange={handlePw} placeholder="비밀번호를 입력해주세요." />
         <div className="find">
@@ -95,8 +99,8 @@ const Login = () => {
           <span className="quarter" />
           <Link to="/">비밀번호 찾기</Link>
         </div>
-        <div className="submit">
-          <Button onClick={handleLogin} size="large" primary>
+        <div className="btn-wrapper">
+          <Button type="submit" size="large" primary>
             로그인
           </Button>
           <Button size="large" onClick={handleSignup}>

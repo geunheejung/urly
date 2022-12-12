@@ -37,5 +37,3 @@ customAxios.interceptors.response.use(async (response) => {
 
   return response;
 });
-
-// customAxios.defaults.headers.common['Authorization'] = `Bearer ${}`;
