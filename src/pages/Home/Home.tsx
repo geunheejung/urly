@@ -6,10 +6,7 @@ import './home.scss';
 const Home = () => {
   return (
     <div className="home-wrapper">
-      <Header />
-      <main>
-        <Banner />
-      </main>
+      <Banner />
     </div>
   );
 };

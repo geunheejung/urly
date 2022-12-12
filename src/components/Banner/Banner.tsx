@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import classNames from 'classnames';
 import Slider, { Settings, CustomArrowProps } from 'react-slick';
 import banner1 from '@/images/banner1.avif';
 import banner2 from '@/images/banner2.avif';
 import banner3 from '@/images/banner3.avif';
 import banner4 from '@/images/banner4.avif';
 import banner5 from '@/images/banner5.avif';
-import { NavLink } from 'react-router-dom';
-import classNames from 'classnames';
+import './banner.scss';
 
 const CustomArrow = ({ className, style, onClick }: CustomArrowProps) => {
   return <div className={`${className}`} style={style} onClick={onClick} />;
@@ -57,7 +58,11 @@ const Banner = () => {
   };
 
   return (
-    <div className={classNames('banner', { show: isShow })} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
+    <div
+      className={classNames('banner-wrapper', { show: isShow })}
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
+    >
       <Slider {...settings}>
         {images.map((image, index) => (
           <div key={index}>

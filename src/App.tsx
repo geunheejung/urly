@@ -7,16 +7,19 @@ import Signup from '@/pages/Signup';
 import queryClient from '@/services/queryClient';
 import { ROUTE } from './common';
 import Login from './pages/Login';
+import Layout from './components/Layout';
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Routes>
-        <Route path="/main" element={<Home />} />
-        <Route path={ROUTE.SIGN_UP} element={<Signup />} />
-        <Route path={ROUTE.LOGIN} element={<Login />} />
-        <Route path={ROUTE.SHIPPING} element={<Shipping />} />
-        <Route path={ROUTE.SHIPPING_RESULT} element={<Result />} />
+        <Route element={<Layout />}>
+          <Route path="/main" element={<Home />} />
+          <Route path={ROUTE.SIGN_UP} element={<Signup />} />
+          <Route path={ROUTE.LOGIN} element={<Login />} />
+          <Route path={ROUTE.SHIPPING} element={<Shipping />} />
+          <Route path={ROUTE.SHIPPING_RESULT} element={<Result />} />
+        </Route>
       </Routes>
     </QueryClientProvider>
   );
